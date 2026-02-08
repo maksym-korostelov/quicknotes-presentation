@@ -4,8 +4,12 @@
 
 This project uses specialized instruction files for specific components. **Always follow these when creating or updating code:**
 
-- **Entities:** See [`.github/instructions/entities.instructions.md`](.github/instructions/entities.instructions.md) when creating or updating entities
-- **Code Generation:** See [`.github/instructions/code-generation.instructions.md`](.github/instructions/code-generation.instructions.md) when generating any Swift code
+- **Entities:** See [`./instructions/entities.instructions.md`](./instructions/entities.instructions.md) when creating or updating entities
+- **Code Generation:** See [`./instructions/code-generation.instructions.md`](./instructions/code-generation.instructions.md) when generating any Swift code
+- **UseCases:** See [`./instructions/usecases.instructions.md`](./instructions/usecases.instructions.md) for UseCase protocol + implementation patterns
+- **Repositories:** See [`./instructions/repositories.instructions.md`](./instructions/repositories.instructions.md) for domain and data layer repositories
+- **ViewModels:** See [`./instructions/viewmodels.instructions.md`](./instructions/viewmodels.instructions.md) for @Observable ViewModels with UseCase injection
+- **Unit Tests:** See [`./instructions/unit-tests.instructions.md`](./instructions/unit-tests.instructions.md) for test structure and mocking patterns
 
 ## Project Overview
 
