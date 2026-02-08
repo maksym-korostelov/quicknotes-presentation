@@ -1,12 +1,22 @@
 import Foundation
 
-// MARK: - SaveNoteUseCase
+// MARK: - Protocol
+
+/// Protocol for saving a note.
+protocol SaveNoteUseCaseProtocol {
+    /// Saves the given note. Creates a new note or updates an existing one.
+    /// - Parameter note: The note to save.
+    /// - Throws: An error if validation fails or the save operation fails.
+    func execute(note: Note) async throws
+}
+
+// MARK: - Implementation
 
 /// Handles saving (creating or updating) a note.
 /// Encapsulates validation and persistence logic.
-final class SaveNoteUseCase {
+final class SaveNoteUseCase: SaveNoteUseCaseProtocol {
 
-    // MARK: - Dependencies
+    // MARK: - Properties
 
     private let repository: NoteRepositoryProtocol
 
@@ -16,16 +26,13 @@ final class SaveNoteUseCase {
         self.repository = repository
     }
 
-    // MARK: - Execution
+    // MARK: - Public Methods
 
-    /// Saves the given note. Creates a new note or updates an existing one.
-    /// - Parameter note: The note to save.
-    /// - Throws: An error if validation fails or the save operation fails.
     func execute(note: Note) async throws {
         guard !note.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             throw SaveNoteError.emptyTitle
         }
-        try await repository.addNote(note)
+        try await repository.saveNote(note)
     }
 }
 

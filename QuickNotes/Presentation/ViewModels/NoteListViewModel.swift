@@ -27,15 +27,32 @@ final class NoteListViewModel {
     
     // MARK: - Public Methods
     
+    /// Loads notes for display.
+    @MainActor
+    func loadNotes() async {
+        isLoading = true
+        errorMessage = nil
+        loadSampleData()
+        isLoading = false
+    }
+
     /// Adds a new note to the list
+    @MainActor
     func addNote(title: String, content: String) {
         let note = Note(title: title, content: content)
         notes.insert(note, at: 0)
     }
-    
+
     /// Deletes a note from the list
+    @MainActor
     func deleteNote(_ note: Note) {
         notes.removeAll { $0.id == note.id }
+    }
+
+    /// Deletes a note by its ID.
+    @MainActor
+    func deleteNote(id: UUID) async {
+        notes.removeAll { $0.id == id }
     }
     
     // MARK: - Private Methods

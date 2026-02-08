@@ -17,8 +17,8 @@ final class NoteEditorViewModel {
 
     // MARK: - Dependencies
 
-    private let saveNoteUseCase: SaveNoteUseCase
-    private let getCategoriesUseCase: GetCategoriesUseCase
+    private let saveNoteUseCase: SaveNoteUseCaseProtocol
+    private let getCategoriesUseCase: GetCategoriesUseCaseProtocol
     private(set) var categories: [Category] = []
     private let existingNote: Note?
 
@@ -26,8 +26,8 @@ final class NoteEditorViewModel {
 
     init(
         note: Note? = nil,
-        saveNoteUseCase: SaveNoteUseCase,
-        getCategoriesUseCase: GetCategoriesUseCase
+        saveNoteUseCase: SaveNoteUseCaseProtocol,
+        getCategoriesUseCase: GetCategoriesUseCaseProtocol
     ) {
         self.existingNote = note
         self.title = note?.title ?? ""
@@ -39,6 +39,7 @@ final class NoteEditorViewModel {
 
     // MARK: - Actions
 
+    @MainActor
     func loadCategories() async {
         do {
             categories = try await getCategoriesUseCase.execute()
@@ -47,6 +48,7 @@ final class NoteEditorViewModel {
         }
     }
 
+    @MainActor
     func save() async {
         isLoading = true
         errorMessage = nil
@@ -57,7 +59,7 @@ final class NoteEditorViewModel {
                 content: content,
                 category: selectedCategory,
                 createdAt: existingNote?.createdAt ?? Date(),
-                updatedAt: Date()
+                modifiedAt: Date()
             )
             try await saveNoteUseCase.execute(note: note)
             isSaved = true

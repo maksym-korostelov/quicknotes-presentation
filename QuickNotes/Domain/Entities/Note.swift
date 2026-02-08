@@ -13,6 +13,9 @@ struct Note: Identifiable, Codable, Equatable {
     
     /// Main content of the note
     let content: String
+
+    /// Category associated with the note
+    let category: Category?
     
     /// Date when the note was created
     let createdAt: Date
@@ -26,10 +29,11 @@ struct Note: Identifiable, Codable, Equatable {
 extension Note {
     
     /// Creates a new note with auto-generated ID and current timestamps.
-    init(title: String, content: String) {
+    init(title: String, content: String, category: Category? = nil) {
         self.id = UUID()
         self.title = title
         self.content = content
+        self.category = category
         self.createdAt = Date()
         self.modifiedAt = Date()
     }

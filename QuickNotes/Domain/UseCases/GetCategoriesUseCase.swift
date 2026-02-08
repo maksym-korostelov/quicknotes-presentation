@@ -1,11 +1,21 @@
 import Foundation
 
-// MARK: - GetCategoriesUseCase
+// MARK: - Protocol
+
+/// Protocol for fetching all categories.
+protocol GetCategoriesUseCaseProtocol {
+    /// Fetches all categories.
+    /// - Returns: An array of categories.
+    /// - Throws: An error if the fetch operation fails.
+    func execute() async throws -> [Category]
+}
+
+// MARK: - Implementation
 
 /// Retrieves all available categories.
-final class GetCategoriesUseCase {
+final class GetCategoriesUseCase: GetCategoriesUseCaseProtocol {
 
-    // MARK: - Dependencies
+    // MARK: - Properties
 
     private let repository: CategoryRepositoryProtocol
 
@@ -15,11 +25,8 @@ final class GetCategoriesUseCase {
         self.repository = repository
     }
 
-    // MARK: - Execution
+    // MARK: - Public Methods
 
-    /// Fetches all categories.
-    /// - Returns: An array of categories.
-    /// - Throws: An error if the fetch operation fails.
     func execute() async throws -> [Category] {
         try await repository.fetchCategories()
     }

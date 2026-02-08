@@ -96,7 +96,7 @@ struct NoteDetailView: View {
                 .fontWeight(.semibold)
 
             metadataRow(label: "Created", value: viewModel.note.createdAt.formatted(date: .long, time: .shortened))
-            metadataRow(label: "Last Modified", value: viewModel.note.updatedAt.formatted(date: .long, time: .shortened))
+            metadataRow(label: "Last Modified", value: viewModel.note.modifiedAt.formatted(date: .long, time: .shortened))
             metadataRow(label: "Word Count", value: "\(viewModel.note.content.split(separator: " ").count) words")
         }
     }

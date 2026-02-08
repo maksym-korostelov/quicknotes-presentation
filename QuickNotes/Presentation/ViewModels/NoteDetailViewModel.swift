@@ -14,17 +14,18 @@ final class NoteDetailViewModel {
 
     // MARK: - Dependencies
 
-    private let deleteNoteUseCase: DeleteNoteUseCase
+    private let deleteNoteUseCase: DeleteNoteUseCaseProtocol
 
     // MARK: - Initialization
 
-    init(note: Note, deleteNoteUseCase: DeleteNoteUseCase) {
+    init(note: Note, deleteNoteUseCase: DeleteNoteUseCaseProtocol) {
         self.note = note
         self.deleteNoteUseCase = deleteNoteUseCase
     }
 
     // MARK: - Actions
 
+    @MainActor
     func deleteNote() async {
         isLoading = true
         errorMessage = nil

@@ -37,6 +37,11 @@ struct NoteListView: View {
                     }
                 }
             }
+            .sheet(isPresented: $showingEditor) {
+                AddNoteView { title, content in
+                    viewModel.addNote(title: title, content: content)
+                }
+            }
             .task {
                 await viewModel.loadNotes()
             }
@@ -111,7 +116,7 @@ struct NoteListView: View {
 
                 Spacer()
 
-                Text(note.updatedAt.formatted(date: .abbreviated, time: .shortened))
+                Text(note.modifiedAt.formatted(date: .abbreviated, time: .shortened))
                     .font(.caption2)
                     .foregroundStyle(.tertiary)
             }
