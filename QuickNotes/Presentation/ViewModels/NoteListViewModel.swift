@@ -18,50 +18,65 @@ final class NoteListViewModel {
     /// Error message if something goes wrong
     private(set) var errorMessage: String?
     
+    // MARK: - Dependencies
+
+    private let getNotesUseCase: GetNotesUseCaseProtocol
+    private let saveNoteUseCase: SaveNoteUseCaseProtocol
+    private let deleteNoteUseCase: DeleteNoteUseCaseProtocol
+
     // MARK: - Initialization
-    
-    init() {
-        // Load sample data for demo
-        loadSampleData()
+
+    init(
+        getNotesUseCase: GetNotesUseCaseProtocol,
+        saveNoteUseCase: SaveNoteUseCaseProtocol,
+        deleteNoteUseCase: DeleteNoteUseCaseProtocol
+    ) {
+        self.getNotesUseCase = getNotesUseCase
+        self.saveNoteUseCase = saveNoteUseCase
+        self.deleteNoteUseCase = deleteNoteUseCase
     }
-    
+
     // MARK: - Public Methods
-    
+
     /// Loads notes for display.
     @MainActor
     func loadNotes() async {
         isLoading = true
         errorMessage = nil
-        loadSampleData()
+        do {
+            notes = try await getNotesUseCase.execute()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
         isLoading = false
     }
 
-    /// Adds a new note to the list
+    /// Adds a new note to the list.
     @MainActor
-    func addNote(title: String, content: String) {
-        let note = Note(title: title, content: content)
-        notes.insert(note, at: 0)
-    }
-
-    /// Deletes a note from the list
-    @MainActor
-    func deleteNote(_ note: Note) {
-        notes.removeAll { $0.id == note.id }
+    func addNote(title: String, content: String) async {
+        isLoading = true
+        errorMessage = nil
+        do {
+            let note = Note(title: title, content: content)
+            try await saveNoteUseCase.execute(note: note)
+            notes = try await getNotesUseCase.execute()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+        isLoading = false
     }
 
     /// Deletes a note by its ID.
     @MainActor
     func deleteNote(id: UUID) async {
-        notes.removeAll { $0.id == id }
-    }
-    
-    // MARK: - Private Methods
-    
-    private func loadSampleData() {
-        notes = [
-            Note(title: "Welcome to QuickNotes", content: "This is your first note. Tap + to create more!"),
-            Note(title: "Shopping List", content: "Milk, Eggs, Bread, Butter"),
-            Note(title: "Meeting Notes", content: "Discuss Q4 roadmap with the team")
-        ]
+        isLoading = true
+        errorMessage = nil
+        do {
+            try await deleteNoteUseCase.execute(id: id)
+            notes.removeAll { $0.id == id }
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+        isLoading = false
     }
 }

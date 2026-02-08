@@ -25,19 +25,8 @@ struct SettingsView: View {
 
     private var appearanceSection: some View {
         Section {
-            Picker("Theme", selection: $viewModel.selectedTheme) {
-                Text("System").tag(0)
-                Text("Light").tag(1)
-                Text("Dark").tag(2)
-            }
-            .font(.body)
-
-            Picker("Font Size", selection: $viewModel.fontSize) {
-                Text("Small").tag(0)
-                Text("Medium").tag(1)
-                Text("Large").tag(2)
-            }
-            .font(.body)
+            Toggle("Dark Mode", isOn: $viewModel.isDarkModeEnabled)
+                .font(.body)
         } header: {
             Text("Appearance")
                 .font(.caption)
@@ -52,10 +41,7 @@ struct SettingsView: View {
 
     private var notificationsSection: some View {
         Section {
-            Toggle("Enable Reminders", isOn: $viewModel.remindersEnabled)
-                .font(.body)
-
-            Toggle("Daily Summary", isOn: $viewModel.dailySummaryEnabled)
+            Toggle("Enable Notifications", isOn: $viewModel.isNotificationsEnabled)
                 .font(.body)
         } header: {
             Text("Notifications")

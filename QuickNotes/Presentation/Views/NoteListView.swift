@@ -5,15 +5,26 @@ import SwiftUI
 struct NoteListView: View {
     // MARK: - Properties
 
-    @State var viewModel: NoteListViewModel
+    @State private var viewModel: NoteListViewModel
     @State private var showingAddNote = false
+    private let dependencies: AppDependencies
+
+    // MARK: - Initialization
+
+    init(viewModel: NoteListViewModel, dependencies: AppDependencies) {
+        _viewModel = State(initialValue: viewModel)
+        self.dependencies = dependencies
+    }
 
     // MARK: - Body
 
     var body: some View {
         NavigationStack {
             Group {
-                if viewModel.notes.isEmpty {
+                if viewModel.isLoading {
+                    ProgressView("Loading notes...")
+                        .font(.subheadline)
+                } else if viewModel.notes.isEmpty {
                     emptyStateView
                 } else {
                     noteListContent
@@ -28,8 +39,13 @@ struct NoteListView: View {
                     }
                 }
             }
-            .sheet(isPresented: $showingAddNote) {
-                AddNoteView(viewModel: NoteEditorViewModel())
+            .sheet(isPresented: $showingAddNote, onDismiss: {
+                Task { await viewModel.loadNotes() }
+            }) {
+                NoteEditorView(viewModel: dependencies.makeNoteEditorViewModel())
+            }
+            .task {
+                await viewModel.loadNotes()
             }
         }
     }
@@ -59,14 +75,21 @@ struct NoteListView: View {
     private var noteListContent: some View {
         List {
             ForEach(viewModel.notes) { note in
-                NavigationLink(destination: NoteDetailView(viewModel: NoteDetailViewModel(note: note))) {
+                NavigationLink(
+                    destination: NoteDetailView(
+                        viewModel: dependencies.makeNoteDetailViewModel(note: note),
+                        dependencies: dependencies
+                    )
+                ) {
                     noteRow(note)
                 }
             }
             .onDelete { indexSet in
-                for index in indexSet {
-                    let note = viewModel.notes[index]
-                    viewModel.deleteNote(note)
+                Task {
+                    for index in indexSet {
+                        let note = viewModel.notes[index]
+                        await viewModel.deleteNote(id: note.id)
+                    }
                 }
             }
         }
@@ -95,7 +118,7 @@ struct NoteListView: View {
 
                 Spacer()
 
-                Text(note.updatedAt.formatted(date: .abbreviated, time: .shortened))
+                Text(note.modifiedAt.formatted(date: .abbreviated, time: .shortened))
                     .font(.caption2)
                     .foregroundStyle(.tertiary)
             }

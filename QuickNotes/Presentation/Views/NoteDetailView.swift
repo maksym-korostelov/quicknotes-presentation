@@ -5,7 +5,15 @@ import SwiftUI
 struct NoteDetailView: View {
     // MARK: - Properties
 
-    @State var viewModel: NoteDetailViewModel
+    @State private var viewModel: NoteDetailViewModel
+    private let dependencies: AppDependencies
+
+    // MARK: - Initialization
+
+    init(viewModel: NoteDetailViewModel, dependencies: AppDependencies) {
+        _viewModel = State(initialValue: viewModel)
+        self.dependencies = dependencies
+    }
 
     // MARK: - Body
 
@@ -24,7 +32,11 @@ struct NoteDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                NavigationLink(destination: NoteEditorView(viewModel: NoteEditorViewModel(note: viewModel.note))) {
+                NavigationLink(
+                    destination: NoteEditorView(
+                        viewModel: dependencies.makeNoteEditorViewModel(note: viewModel.note)
+                    )
+                ) {
                     Text("Edit")
                         .font(.body)
                         .fontWeight(.medium)
@@ -89,7 +101,7 @@ struct NoteDetailView: View {
                     .font(.footnote)
                     .foregroundStyle(.secondary)
                 Spacer()
-                Text(viewModel.note.updatedAt.formatted(date: .long, time: .shortened))
+                Text(viewModel.note.modifiedAt.formatted(date: .long, time: .shortened))
                     .font(.footnote)
             }
         }

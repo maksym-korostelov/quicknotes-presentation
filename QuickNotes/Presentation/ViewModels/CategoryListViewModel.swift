@@ -14,16 +14,17 @@ final class CategoryListViewModel {
 
     // MARK: - Dependencies
 
-    private let getCategoriesUseCase: GetCategoriesUseCase
+    private let getCategoriesUseCase: GetCategoriesUseCaseProtocol
 
     // MARK: - Initialization
 
-    init(getCategoriesUseCase: GetCategoriesUseCase) {
+    init(getCategoriesUseCase: GetCategoriesUseCaseProtocol) {
         self.getCategoriesUseCase = getCategoriesUseCase
     }
 
     // MARK: - Actions
 
+    @MainActor
     func loadCategories() async {
         isLoading = true
         errorMessage = nil

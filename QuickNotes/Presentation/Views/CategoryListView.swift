@@ -68,7 +68,7 @@ struct CategoryListView: View {
                 Text(category.name)
                     .font(.headline)
 
-                Text("\(category.noteCount) notes")
+                Text("Tap to view notes")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

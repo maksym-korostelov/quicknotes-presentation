@@ -3,16 +3,23 @@ import SwiftUI
 // MARK: - ContentView
 
 struct ContentView: View {
+    // MARK: - Properties
+
+    private let dependencies = AppDependencies()
+
     // MARK: - Body
 
     var body: some View {
         TabView {
-            NoteListView(viewModel: NoteListViewModel())
-                .tabItem {
-                    Label("Notes", systemImage: "note.text")
-                }
+            NoteListView(
+                viewModel: dependencies.makeNoteListViewModel(),
+                dependencies: dependencies
+            )
+            .tabItem {
+                Label("Notes", systemImage: "note.text")
+            }
 
-            CategoryListView(viewModel: CategoryListViewModel())
+            CategoryListView(viewModel: dependencies.makeCategoryListViewModel())
                 .tabItem {
                     Label("Categories", systemImage: "folder")
                 }

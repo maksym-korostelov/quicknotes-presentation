@@ -11,22 +11,42 @@ struct NoteEditorView: View {
     // MARK: - Body
 
     var body: some View {
-        Form {
-            titleSection
-            contentSection
-            categorySection
-        }
-        .navigationTitle("Edit Note")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button("Save") {
-                    viewModel.saveNote()
-                    dismiss()
+        NavigationStack {
+            Form {
+                titleSection
+                contentSection
+                categorySection
+            }
+            .navigationTitle("Edit Note")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        dismiss()
+                    }
                 }
-                .font(.body)
-                .fontWeight(.semibold)
-                .disabled(viewModel.title.isEmpty)
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") {
+                        Task {
+                            await viewModel.save()
+                            if viewModel.isSaved {
+                                dismiss()
+                            }
+                        }
+                    }
+                    .font(.body)
+                    .fontWeight(.semibold)
+                    .disabled(!viewModel.isValid || viewModel.isLoading)
+                }
+            }
+            .task {
+                await viewModel.loadCategories()
+            }
+            .overlay {
+                if viewModel.isLoading {
+                    ProgressView("Saving...")
+                        .font(.subheadline)
+                }
             }
         }
     }
@@ -64,15 +84,15 @@ struct NoteEditorView: View {
 
     private var categorySection: some View {
         Section {
-            Picker("Category", selection: $viewModel.selectedCategoryIndex) {
+            Picker("Category", selection: $viewModel.selectedCategory) {
                 Text("None")
                     .font(.body)
-                    .tag(nil as Int?)
+                    .tag(nil as Category?)
 
-                ForEach(Array(viewModel.availableCategories.enumerated()), id: \.offset) { index, category in
+                ForEach(viewModel.categories) { category in
                     Label(category.name, systemImage: category.icon)
                         .font(.body)
-                        .tag(index as Int?)
+                        .tag(category as Category?)
                 }
             }
             .font(.subheadline)

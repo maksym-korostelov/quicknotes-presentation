@@ -31,17 +31,19 @@ struct ProfileView: View {
                 .font(.system(size: 80))
                 .foregroundStyle(.blue)
 
-            Text(viewModel.profile.name)
+            Text(viewModel.profile?.displayName ?? "User")
                 .font(.title)
                 .fontWeight(.bold)
 
-            Text(viewModel.profile.email)
+            Text(viewModel.profile?.email ?? "")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
 
-            Text("Member since \(viewModel.profile.memberSince.formatted(date: .long, time: .omitted))")
-                .font(.caption)
-                .foregroundStyle(.tertiary)
+            if let joinedDate = viewModel.profile?.joinedDate {
+                Text("Member since \(joinedDate.formatted(date: .long, time: .omitted))")
+                    .font(.caption)
+                    .foregroundStyle(.tertiary)
+            }
         }
     }
 
@@ -54,8 +56,10 @@ struct ProfileView: View {
                 .fontWeight(.semibold)
 
             HStack(spacing: 16) {
-                statCard(title: "Notes", value: "\(viewModel.profile.totalNotes)", icon: "note.text")
-                statCard(title: "Categories", value: "\(viewModel.profile.totalCategories)", icon: "folder")
+                if let profile = viewModel.profile {
+                    statCard(title: "Notes", value: "\(profile.notesCount)", icon: "note.text")
+                    statCard(title: "Categories", value: "\(profile.categoriesCount)", icon: "folder")
+                }
             }
         }
     }
