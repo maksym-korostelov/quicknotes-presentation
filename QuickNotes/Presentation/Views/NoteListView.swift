@@ -2,121 +2,120 @@ import SwiftUI
 
 // MARK: - NoteListView
 
-/// Main view displaying the list of notes.
 struct NoteListView: View {
-    
+
     // MARK: - Properties
-    
+
     @State private var viewModel: NoteListViewModel
-    @State private var showingAddNote = false
-    
+    @State private var showingEditor = false
+
     // MARK: - Initialization
-    
+
     init(viewModel: NoteListViewModel) {
         _viewModel = State(initialValue: viewModel)
     }
-    
+
     // MARK: - Body
-    
+
     var body: some View {
         NavigationStack {
-            List {
-                ForEach(viewModel.notes) { note in
-                    NoteRowView(note: note)
+            Group {
+                if viewModel.isLoading {
+                    ProgressView("Loading notes...")
+                        .font(.subheadline)
+                } else if viewModel.notes.isEmpty {
+                    emptyStateView
+                } else {
+                    noteListContent
                 }
-                .onDelete(perform: deleteNotes)
             }
-            .navigationTitle("QuickNotes")
+            .navigationTitle("My Notes")
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
-                    Button(action: { showingAddNote = true }) {
+                    Button(action: { showingEditor = true }) {
                         Image(systemName: "plus")
                     }
                 }
             }
-            .sheet(isPresented: $showingAddNote) {
-                AddNoteView { title, content in
-                    viewModel.addNote(title: title, content: content)
-                }
+            .task {
+                await viewModel.loadNotes()
             }
         }
     }
-    
-    // MARK: - Private Methods
-    
-    private func deleteNotes(at offsets: IndexSet) {
-        for index in offsets {
-            viewModel.deleteNote(viewModel.notes[index])
+
+    // MARK: - Subviews
+
+    private var emptyStateView: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "note.text")
+                .font(.system(size: 56))
+                .foregroundStyle(.secondary)
+
+            Text("No Notes Yet")
+                .font(.title2)
+                .fontWeight(.semibold)
+
+            Text("Tap the + button to create your first note.")
+                .font(.body)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 40)
         }
     }
-}
 
-// MARK: - NoteRowView
+    private var noteListContent: some View {
+        List {
+            ForEach(viewModel.notes) { note in
+                noteRow(for: note)
+            }
+            .onDelete { indexSet in
+                Task {
+                    for index in indexSet {
+                        let note = viewModel.notes[index]
+                        await viewModel.deleteNote(id: note.id)
+                    }
+                }
+            }
 
-/// Row view for displaying a single note in the list.
-struct NoteRowView: View {
-    
-    let note: Note
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+            // MARK: - Footer
+            Section {
+                Text("\(viewModel.notes.count) note(s)")
+                    .font(.caption)
+                    .foregroundStyle(.tertiary)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .listRowBackground(Color.clear)
+            }
+        }
+        .listStyle(.insetGrouped)
+    }
+
+    private func noteRow(for note: Note) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
             Text(note.title)
                 .font(.headline)
-            
-            Text(note.content)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .lineLimit(2)
-            
-            Text(note.createdAt.formatted(date: .abbreviated, time: .shortened))
-                .font(.caption)
-                .foregroundStyle(.tertiary)
+                .lineLimit(1)
+
+            if !note.content.isEmpty {
+                Text(note.content)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(2)
+            }
+
+            HStack {
+                if let category = note.category {
+                    Label(category.name, systemImage: category.icon)
+                        .font(.caption)
+                        .foregroundStyle(.blue)
+                }
+
+                Spacer()
+
+                Text(note.updatedAt.formatted(date: .abbreviated, time: .shortened))
+                    .font(.caption2)
+                    .foregroundStyle(.tertiary)
+            }
         }
         .padding(.vertical, 4)
     }
-}
-
-// MARK: - AddNoteView
-
-/// Sheet view for creating a new note.
-struct AddNoteView: View {
-    
-    @Environment(\.dismiss) private var dismiss
-    @State private var title = ""
-    @State private var content = ""
-    
-    let onSave: (String, String) -> Void
-    
-    var body: some View {
-        NavigationStack {
-            Form {
-                TextField("Title", text: $title)
-                
-                Section("Content") {
-                    TextEditor(text: $content)
-                        .frame(minHeight: 200)
-                }
-            }
-            .navigationTitle("New Note")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                        onSave(title, content)
-                        dismiss()
-                    }
-                    .disabled(title.isEmpty)
-                }
-            }
-        }
-    }
-}
-
-// MARK: - Preview
-
-#Preview {
-    NoteListView(viewModel: NoteListViewModel())
 }
