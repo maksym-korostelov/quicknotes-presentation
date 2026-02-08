@@ -3,27 +3,17 @@ import SwiftUI
 // MARK: - NoteListView
 
 struct NoteListView: View {
-
     // MARK: - Properties
 
-    @State private var viewModel: NoteListViewModel
-    @State private var showingEditor = false
-
-    // MARK: - Initialization
-
-    init(viewModel: NoteListViewModel) {
-        _viewModel = State(initialValue: viewModel)
-    }
+    @State var viewModel: NoteListViewModel
+    @State private var showingAddNote = false
 
     // MARK: - Body
 
     var body: some View {
         NavigationStack {
             Group {
-                if viewModel.isLoading {
-                    ProgressView("Loading notes...")
-                        .font(.subheadline)
-                } else if viewModel.notes.isEmpty {
+                if viewModel.notes.isEmpty {
                     emptyStateView
                 } else {
                     noteListContent
@@ -31,24 +21,20 @@ struct NoteListView: View {
             }
             .navigationTitle("My Notes")
             .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    Button(action: { showingEditor = true }) {
-                        Image(systemName: "plus")
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: { showingAddNote = true }) {
+                        Image(systemName: "plus.circle.fill")
+                            .font(.title2)
                     }
                 }
             }
-            .sheet(isPresented: $showingEditor) {
-                AddNoteView { title, content in
-                    viewModel.addNote(title: title, content: content)
-                }
-            }
-            .task {
-                await viewModel.loadNotes()
+            .sheet(isPresented: $showingAddNote) {
+                AddNoteView(viewModel: NoteEditorViewModel())
             }
         }
     }
 
-    // MARK: - Subviews
+    // MARK: - Empty State
 
     private var emptyStateView: some View {
         VStack(spacing: 16) {
@@ -60,52 +46,45 @@ struct NoteListView: View {
                 .font(.title2)
                 .fontWeight(.semibold)
 
-            Text("Tap the + button to create your first note.")
+            Text("Tap the + button to create your first note")
                 .font(.body)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
-                .padding(.horizontal, 40)
         }
+        .padding()
     }
+
+    // MARK: - Note List
 
     private var noteListContent: some View {
         List {
             ForEach(viewModel.notes) { note in
-                noteRow(for: note)
-            }
-            .onDelete { indexSet in
-                Task {
-                    for index in indexSet {
-                        let note = viewModel.notes[index]
-                        await viewModel.deleteNote(id: note.id)
-                    }
+                NavigationLink(destination: NoteDetailView(viewModel: NoteDetailViewModel(note: note))) {
+                    noteRow(note)
                 }
             }
-
-            // MARK: - Footer
-            Section {
-                Text("\(viewModel.notes.count) note(s)")
-                    .font(.caption)
-                    .foregroundStyle(.tertiary)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .listRowBackground(Color.clear)
+            .onDelete { indexSet in
+                for index in indexSet {
+                    let note = viewModel.notes[index]
+                    viewModel.deleteNote(note)
+                }
             }
         }
         .listStyle(.insetGrouped)
     }
 
-    private func noteRow(for note: Note) -> some View {
+    // MARK: - Note Row
+
+    private func noteRow(_ note: Note) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(note.title)
                 .font(.headline)
                 .lineLimit(1)
 
-            if !note.content.isEmpty {
-                Text(note.content)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(2)
-            }
+            Text(note.content)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .lineLimit(2)
 
             HStack {
                 if let category = note.category {
@@ -116,7 +95,7 @@ struct NoteListView: View {
 
                 Spacer()
 
-                Text(note.modifiedAt.formatted(date: .abbreviated, time: .shortened))
+                Text(note.updatedAt.formatted(date: .abbreviated, time: .shortened))
                     .font(.caption2)
                     .foregroundStyle(.tertiary)
             }

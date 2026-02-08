@@ -3,61 +3,29 @@ import SwiftUI
 // MARK: - ContentView
 
 struct ContentView: View {
-
-    // MARK: - Properties
-
-    @State private var selectedTab: Tab = .notes
-
-    // MARK: - Tab Definition
-
-    enum Tab: String, CaseIterable {
-        case notes = "Notes"
-        case categories = "Categories"
-        case settings = "Settings"
-        case profile = "Profile"
-
-        var icon: String {
-            switch self {
-            case .notes: return "note.text"
-            case .categories: return "folder"
-            case .settings: return "gearshape"
-            case .profile: return "person.circle"
-            }
-        }
-    }
-
     // MARK: - Body
 
     var body: some View {
-        TabView(selection: $selectedTab) {
-            // Note: Using placeholder ViewModels for now.
-            // Proper dependency injection will be added in a later session.
-
-            Text("Notes Tab Placeholder")
-                .font(.title2)
+        TabView {
+            NoteListView(viewModel: NoteListViewModel())
                 .tabItem {
-                    Label(Tab.notes.rawValue, systemImage: Tab.notes.icon)
+                    Label("Notes", systemImage: "note.text")
                 }
-                .tag(Tab.notes)
 
-            Text("Categories Tab Placeholder")
-                .font(.title2)
+            CategoryListView(viewModel: CategoryListViewModel())
                 .tabItem {
-                    Label(Tab.categories.rawValue, systemImage: Tab.categories.icon)
+                    Label("Categories", systemImage: "folder")
                 }
-                .tag(Tab.categories)
 
-            SettingsView()
+            SettingsView(viewModel: SettingsViewModel())
                 .tabItem {
-                    Label(Tab.settings.rawValue, systemImage: Tab.settings.icon)
+                    Label("Settings", systemImage: "gear")
                 }
-                .tag(Tab.settings)
 
-            ProfileView()
+            ProfileView(viewModel: ProfileViewModel())
                 .tabItem {
-                    Label(Tab.profile.rawValue, systemImage: Tab.profile.icon)
+                    Label("Profile", systemImage: "person.circle")
                 }
-                .tag(Tab.profile)
         }
     }
 }

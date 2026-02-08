@@ -3,123 +3,120 @@ import SwiftUI
 // MARK: - ProfileView
 
 struct ProfileView: View {
-
     // MARK: - Properties
 
-    @State private var viewModel = ProfileViewModel()
+    @State var viewModel: ProfileViewModel
 
     // MARK: - Body
 
     var body: some View {
         NavigationStack {
             ScrollView {
-                if let profile = viewModel.profile {
-                    VStack(spacing: 24) {
-                        avatarSection(profile: profile)
-                        Divider()
-                        statsSection(profile: profile)
-                        Divider()
-                        detailsSection(profile: profile)
-                        Spacer(minLength: 40)
-                        signOutButton
-                    }
-                    .padding()
-                } else {
-                    ProgressView("Loading profile...")
-                        .font(.subheadline)
+                VStack(spacing: 24) {
+                    avatarSection
+                    statsSection
+                    actionsSection
                 }
+                .padding()
             }
             .navigationTitle("Profile")
         }
     }
 
-    // MARK: - Subviews
+    // MARK: - Avatar Section
 
-    private func avatarSection(profile: UserProfile) -> some View {
+    private var avatarSection: some View {
         VStack(spacing: 12) {
             Image(systemName: "person.circle.fill")
                 .font(.system(size: 80))
                 .foregroundStyle(.blue)
 
-            Text(profile.displayName)
+            Text(viewModel.profile.name)
                 .font(.title)
                 .fontWeight(.bold)
 
-            Text(profile.email)
+            Text(viewModel.profile.email)
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
+
+            Text("Member since \(viewModel.profile.memberSince.formatted(date: .long, time: .omitted))")
+                .font(.caption)
+                .foregroundStyle(.tertiary)
         }
     }
 
-    private func statsSection(profile: UserProfile) -> some View {
-        HStack(spacing: 40) {
-            statItem(value: "\(profile.notesCount)", label: "Notes")
-            statItem(value: "\(profile.categoriesCount)", label: "Categories")
-            statItem(value: memberSince(profile.joinedDate), label: "Member Since")
-        }
-    }
+    // MARK: - Stats Section
 
-    private func statItem(value: String, label: String) -> some View {
-        VStack(spacing: 4) {
-            Text(value)
+    private var statsSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Activity")
                 .font(.title2)
                 .fontWeight(.semibold)
 
-            Text(label)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-        }
-    }
-
-    private func detailsSection(profile: UserProfile) -> some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("Account Details")
-                .font(.headline)
-                .padding(.bottom, 4)
-
-            detailRow(icon: "person.fill", title: "Display Name", value: profile.displayName)
-            detailRow(icon: "envelope.fill", title: "Email", value: profile.email)
-            detailRow(icon: "calendar", title: "Joined", value: profile.joinedDate.formatted(date: .long, time: .omitted))
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-    }
-
-    private func detailRow(icon: String, title: String, value: String) -> some View {
-        HStack(spacing: 12) {
-            Image(systemName: icon)
-                .font(.body)
-                .foregroundStyle(.blue)
-                .frame(width: 24)
-
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-
-                Text(value)
-                    .font(.body)
+            HStack(spacing: 16) {
+                statCard(title: "Notes", value: "\(viewModel.profile.totalNotes)", icon: "note.text")
+                statCard(title: "Categories", value: "\(viewModel.profile.totalCategories)", icon: "folder")
             }
         }
     }
 
-    private var signOutButton: some View {
-        Button(role: .destructive) {
-            // Sign out action
-        } label: {
-            Text("Sign Out")
+    // MARK: - Stat Card
+
+    private func statCard(title: String, value: String, icon: String) -> some View {
+        VStack(spacing: 8) {
+            Image(systemName: icon)
                 .font(.headline)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 12)
+                .foregroundStyle(.blue)
+
+            Text(value)
+                .font(.title2)
+                .fontWeight(.bold)
+
+            Text(title)
+                .font(.caption)
+                .foregroundStyle(.secondary)
         }
-        .buttonStyle(.bordered)
-        .tint(.red)
+        .frame(maxWidth: .infinity)
+        .padding()
+        .background(Color(.systemGray6))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 
-    // MARK: - Helpers
+    // MARK: - Actions Section
 
-    private func memberSince(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMM yyyy"
-        return formatter.string(from: date)
+    private var actionsSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Account")
+                .font(.title2)
+                .fontWeight(.semibold)
+
+            Button(action: {}) {
+                HStack {
+                    Label("Edit Profile", systemImage: "pencil")
+                        .font(.body)
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.caption)
+                        .foregroundStyle(.tertiary)
+                }
+                .padding()
+                .background(Color(.systemGray6))
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+            }
+            .buttonStyle(.plain)
+
+            Button(action: {}) {
+                HStack {
+                    Label("Sign Out", systemImage: "rectangle.portrait.and.arrow.right")
+                        .font(.body)
+                        .foregroundStyle(.red)
+                    Spacer()
+                }
+                .padding()
+                .background(Color(.systemGray6))
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+            }
+            .buttonStyle(.plain)
+        }
     }
 }

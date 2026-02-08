@@ -3,17 +3,9 @@ import SwiftUI
 // MARK: - NoteDetailView
 
 struct NoteDetailView: View {
-
     // MARK: - Properties
 
-    @State private var viewModel: NoteDetailViewModel
-    @Environment(\.dismiss) private var dismiss
-
-    // MARK: - Initialization
-
-    init(viewModel: NoteDetailViewModel) {
-        _viewModel = State(initialValue: viewModel)
-    }
+    @State var viewModel: NoteDetailViewModel
 
     // MARK: - Body
 
@@ -28,36 +20,26 @@ struct NoteDetailView: View {
             }
             .padding()
         }
-        .navigationTitle("Note Details")
+        .navigationTitle("Note")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .destructiveAction) {
-                Button(role: .destructive) {
-                    Task {
-                        await viewModel.deleteNote()
-                        dismiss()
-                    }
-                } label: {
-                    Image(systemName: "trash")
+            ToolbarItem(placement: .navigationBarTrailing) {
+                NavigationLink(destination: NoteEditorView(viewModel: NoteEditorViewModel(note: viewModel.note))) {
+                    Text("Edit")
+                        .font(.body)
+                        .fontWeight(.medium)
                 }
-                .disabled(viewModel.isLoading)
-            }
-        }
-        .overlay {
-            if viewModel.isLoading {
-                ProgressView()
             }
         }
     }
 
-    // MARK: - Subviews
+    // MARK: - Header Section
 
     private var headerSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(viewModel.note.title)
                 .font(.largeTitle)
                 .fontWeight(.bold)
-                .lineLimit(3)
 
             if let category = viewModel.note.category {
                 Label(category.name, systemImage: category.icon)
@@ -65,10 +47,13 @@ struct NoteDetailView: View {
                     .foregroundStyle(.blue)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 4)
-                    .background(.blue.opacity(0.1), in: Capsule())
+                    .background(.blue.opacity(0.1))
+                    .clipShape(Capsule())
             }
         }
     }
+
+    // MARK: - Content Section
 
     private var contentSection: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -76,40 +61,40 @@ struct NoteDetailView: View {
                 .font(.title3)
                 .fontWeight(.semibold)
 
-            if viewModel.note.content.isEmpty {
-                Text("No content available.")
-                    .font(.body)
-                    .foregroundStyle(.secondary)
-                    .italic()
-            } else {
-                Text(viewModel.note.content)
-                    .font(.body)
-                    .lineSpacing(4)
-            }
+            Text(viewModel.note.content)
+                .font(.body)
+                .lineSpacing(4)
         }
     }
 
+    // MARK: - Metadata Section
+
     private var metadataSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 8) {
             Text("Details")
                 .font(.title3)
                 .fontWeight(.semibold)
 
-            metadataRow(label: "Created", value: viewModel.note.createdAt.formatted(date: .long, time: .shortened))
-            metadataRow(label: "Last Modified", value: viewModel.note.modifiedAt.formatted(date: .long, time: .shortened))
-            metadataRow(label: "Word Count", value: "\(viewModel.note.content.split(separator: " ").count) words")
-        }
-    }
+            HStack {
+                Label("Created", systemImage: "calendar")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Text(viewModel.note.createdAt.formatted(date: .long, time: .shortened))
+                    .font(.footnote)
+            }
 
-    private func metadataRow(label: String, value: String) -> some View {
-        HStack {
-            Text(label)
-                .font(.footnote)
-                .foregroundStyle(.secondary)
-                .frame(width: 120, alignment: .leading)
-
-            Text(value)
-                .font(.footnote)
+            HStack {
+                Label("Modified", systemImage: "clock")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Text(viewModel.note.updatedAt.formatted(date: .long, time: .shortened))
+                    .font(.footnote)
+            }
         }
+        .padding()
+        .background(Color(.systemGray6))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 }

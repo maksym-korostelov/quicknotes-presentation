@@ -3,61 +3,35 @@ import SwiftUI
 // MARK: - NoteEditorView
 
 struct NoteEditorView: View {
-
     // MARK: - Properties
 
-    @State private var viewModel: NoteEditorViewModel
+    @State var viewModel: NoteEditorViewModel
     @Environment(\.dismiss) private var dismiss
-
-    // MARK: - Initialization
-
-    init(viewModel: NoteEditorViewModel) {
-        _viewModel = State(initialValue: viewModel)
-    }
 
     // MARK: - Body
 
     var body: some View {
-        NavigationStack {
-            Form {
-                titleSection
-                contentSection
-                categorySection
-            }
-            .navigationTitle("Edit Note")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
-                        dismiss()
-                    }
+        Form {
+            titleSection
+            contentSection
+            categorySection
+        }
+        .navigationTitle("Edit Note")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button("Save") {
+                    viewModel.saveNote()
+                    dismiss()
                 }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                        Task {
-                            await viewModel.save()
-                            if viewModel.isSaved {
-                                dismiss()
-                            }
-                        }
-                    }
-                    .font(.headline)
-                    .disabled(!viewModel.isValid || viewModel.isLoading)
-                }
-            }
-            .task {
-                await viewModel.loadCategories()
-            }
-            .overlay {
-                if viewModel.isLoading {
-                    ProgressView("Saving...")
-                        .font(.subheadline)
-                }
+                .font(.body)
+                .fontWeight(.semibold)
+                .disabled(viewModel.title.isEmpty)
             }
         }
     }
 
-    // MARK: - Subviews
+    // MARK: - Title Section
 
     private var titleSection: some View {
         Section {
@@ -65,16 +39,11 @@ struct NoteEditorView: View {
                 .font(.system(size: 18, weight: .medium))
         } header: {
             Text("Title")
-                .font(.caption)
-                .textCase(.uppercase)
-        } footer: {
-            if viewModel.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                Text("Title is required")
-                    .font(.caption2)
-                    .foregroundStyle(.red)
-            }
+                .font(.headline)
         }
     }
+
+    // MARK: - Content Section
 
     private var contentSection: some View {
         Section {
@@ -83,8 +52,7 @@ struct NoteEditorView: View {
                 .frame(minHeight: 200)
         } header: {
             Text("Content")
-                .font(.caption)
-                .textCase(.uppercase)
+                .font(.headline)
         } footer: {
             Text("\(viewModel.content.count) characters")
                 .font(.caption2)
@@ -92,29 +60,29 @@ struct NoteEditorView: View {
         }
     }
 
+    // MARK: - Category Section
+
     private var categorySection: some View {
         Section {
-            if viewModel.categories.isEmpty {
-                Text("No categories available")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-            } else {
-                Picker("Category", selection: $viewModel.selectedCategory) {
-                    Text("None")
-                        .font(.subheadline)
-                        .tag(nil as Category?)
+            Picker("Category", selection: $viewModel.selectedCategoryIndex) {
+                Text("None")
+                    .font(.body)
+                    .tag(nil as Int?)
 
-                    ForEach(viewModel.categories) { category in
-                        Label(category.name, systemImage: category.icon)
-                            .font(.subheadline)
-                            .tag(category as Category?)
-                    }
+                ForEach(Array(viewModel.availableCategories.enumerated()), id: \.offset) { index, category in
+                    Label(category.name, systemImage: category.icon)
+                        .font(.body)
+                        .tag(index as Int?)
                 }
             }
+            .font(.subheadline)
         } header: {
             Text("Category")
+                .font(.headline)
+        } footer: {
+            Text("Organize your note by assigning a category")
                 .font(.caption)
-                .textCase(.uppercase)
+                .foregroundStyle(.secondary)
         }
     }
 }

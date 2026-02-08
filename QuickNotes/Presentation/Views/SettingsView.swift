@@ -3,10 +3,9 @@ import SwiftUI
 // MARK: - SettingsView
 
 struct SettingsView: View {
-
     // MARK: - Properties
 
-    @State private var viewModel = SettingsViewModel()
+    @State var viewModel: SettingsViewModel
 
     // MARK: - Body
 
@@ -14,81 +13,100 @@ struct SettingsView: View {
         NavigationStack {
             Form {
                 appearanceSection
-                notesSection
                 notificationsSection
+                dataSection
                 aboutSection
             }
             .navigationTitle("Settings")
         }
     }
 
-    // MARK: - Subviews
+    // MARK: - Appearance Section
 
     private var appearanceSection: some View {
         Section {
-            Toggle(isOn: $viewModel.isDarkModeEnabled) {
-                Label("Dark Mode", systemImage: "moon.fill")
-                    .font(.body)
+            Picker("Theme", selection: $viewModel.selectedTheme) {
+                Text("System").tag(0)
+                Text("Light").tag(1)
+                Text("Dark").tag(2)
             }
+            .font(.body)
+
+            Picker("Font Size", selection: $viewModel.fontSize) {
+                Text("Small").tag(0)
+                Text("Medium").tag(1)
+                Text("Large").tag(2)
+            }
+            .font(.body)
         } header: {
             Text("Appearance")
                 .font(.caption)
-                .textCase(.uppercase)
         } footer: {
-            Text("Override system appearance settings.")
+            Text("Customize how QuickNotes looks")
                 .font(.caption2)
+                .foregroundStyle(.secondary)
         }
     }
 
-    private var notesSection: some View {
-        Section {
-            Picker("Sort Order", selection: $viewModel.sortOrder) {
-                ForEach(SettingsViewModel.SortOrder.allCases) { order in
-                    Text(order.rawValue)
-                        .font(.body)
-                        .tag(order)
-                }
-            }
-
-            HStack {
-                Text("Auto-save Interval")
-                    .font(.body)
-                Spacer()
-                Text("\(viewModel.autoSaveInterval)s")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-            }
-
-            HStack {
-                Text("Default Category")
-                    .font(.body)
-                Spacer()
-                Text(viewModel.defaultCategoryName)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-            }
-        } header: {
-            Text("Notes")
-                .font(.caption)
-                .textCase(.uppercase)
-        }
-    }
+    // MARK: - Notifications Section
 
     private var notificationsSection: some View {
         Section {
-            Toggle(isOn: $viewModel.isNotificationsEnabled) {
-                Label("Reminders", systemImage: "bell.fill")
-                    .font(.body)
-            }
+            Toggle("Enable Reminders", isOn: $viewModel.remindersEnabled)
+                .font(.body)
+
+            Toggle("Daily Summary", isOn: $viewModel.dailySummaryEnabled)
+                .font(.body)
         } header: {
             Text("Notifications")
                 .font(.caption)
-                .textCase(.uppercase)
         } footer: {
-            Text("Receive reminders for scheduled notes.")
+            Text("Manage how QuickNotes sends you notifications")
                 .font(.caption2)
+                .foregroundStyle(.secondary)
         }
     }
+
+    // MARK: - Data Section
+
+    private var dataSection: some View {
+        Section {
+            Button(action: {}) {
+                HStack {
+                    Text("Export Notes")
+                        .font(.body)
+                    Spacer()
+                    Image(systemName: "square.and.arrow.up")
+                        .font(.body)
+                }
+            }
+
+            Button(action: {}) {
+                HStack {
+                    Text("Import Notes")
+                        .font(.body)
+                    Spacer()
+                    Image(systemName: "square.and.arrow.down")
+                        .font(.body)
+                }
+            }
+
+            Button(role: .destructive, action: {}) {
+                HStack {
+                    Text("Delete All Notes")
+                        .font(.body)
+                    Spacer()
+                    Image(systemName: "trash")
+                        .font(.body)
+                }
+            }
+        } header: {
+            Text("Data")
+                .font(.caption)
+        }
+    }
+
+    // MARK: - About Section
 
     private var aboutSection: some View {
         Section {
@@ -96,8 +114,8 @@ struct SettingsView: View {
                 Text("Version")
                     .font(.body)
                 Spacer()
-                Text(viewModel.appVersion)
-                    .font(.footnote)
+                Text("1.0.0")
+                    .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
 
@@ -105,36 +123,29 @@ struct SettingsView: View {
                 Text("Build")
                     .font(.body)
                 Spacer()
-                Text(viewModel.buildNumber)
-                    .font(.footnote)
+                Text("2025.1")
+                    .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
 
-            Link(destination: URL(string: "https://quicknotes.app/privacy")!) {
-                HStack {
-                    Text("Privacy Policy")
-                        .font(.body)
-                    Spacer()
-                    Image(systemName: "arrow.up.right.square")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
+            Link(destination: URL(string: "https://example.com/privacy")!) {
+                Text("Privacy Policy")
+                    .font(.body)
             }
 
-            Link(destination: URL(string: "https://quicknotes.app/terms")!) {
-                HStack {
-                    Text("Terms of Service")
-                        .font(.body)
-                    Spacer()
-                    Image(systemName: "arrow.up.right.square")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
+            Link(destination: URL(string: "https://example.com/terms")!) {
+                Text("Terms of Service")
+                    .font(.body)
             }
         } header: {
             Text("About")
                 .font(.caption)
-                .textCase(.uppercase)
+        } footer: {
+            Text("Made with ❤️ using SwiftUI")
+                .font(.footnote)
+                .frame(maxWidth: .infinity)
+                .multilineTextAlignment(.center)
+                .padding(.top, 8)
         }
     }
 }
