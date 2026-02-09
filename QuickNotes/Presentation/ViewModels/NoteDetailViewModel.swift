@@ -14,18 +14,37 @@ final class NoteDetailViewModel {
 
     // MARK: - Dependencies
 
+    private let getNoteUseCase: GetNoteUseCaseProtocol
     private let deleteNoteUseCase: DeleteNoteUseCaseProtocol
     private let saveNoteUseCase: SaveNoteUseCaseProtocol
 
     // MARK: - Initialization
 
-    init(note: Note, deleteNoteUseCase: DeleteNoteUseCaseProtocol, saveNoteUseCase: SaveNoteUseCaseProtocol) {
+    init(
+        note: Note,
+        getNoteUseCase: GetNoteUseCaseProtocol,
+        deleteNoteUseCase: DeleteNoteUseCaseProtocol,
+        saveNoteUseCase: SaveNoteUseCaseProtocol
+    ) {
         self.note = note
+        self.getNoteUseCase = getNoteUseCase
         self.deleteNoteUseCase = deleteNoteUseCase
         self.saveNoteUseCase = saveNoteUseCase
     }
 
     // MARK: - Actions
+
+    /// Refreshes the note from the repository (e.g. after returning from the editor).
+    @MainActor
+    func refreshNote() async {
+        do {
+            if let updated = try await getNoteUseCase.execute(id: note.id) {
+                note = updated
+            }
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
 
     @MainActor
     func togglePin() async {

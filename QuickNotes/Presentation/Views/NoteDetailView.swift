@@ -82,6 +82,9 @@ struct NoteDetailView: View {
                 Text(message)
             }
         }
+        .onAppear {
+            Task { await viewModel.refreshNote() }
+        }
     }
 
     // MARK: - Header Section

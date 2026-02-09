@@ -1,4 +1,5 @@
 import Foundation
+import SwiftData
 
 // MARK: - AppDependencies
 
@@ -13,6 +14,7 @@ final class AppDependencies {
     // MARK: - Use Cases
 
     let getNotesUseCase: GetNotesUseCaseProtocol
+    let getNoteUseCase: GetNoteUseCaseProtocol
     let saveNoteUseCase: SaveNoteUseCaseProtocol
     let deleteNoteUseCase: DeleteNoteUseCaseProtocol
     let getCategoriesUseCase: GetCategoriesUseCaseProtocol
@@ -21,16 +23,47 @@ final class AppDependencies {
 
     init(
         noteRepository: NoteRepositoryProtocol? = nil,
-        categoryRepository: CategoryRepositoryProtocol? = nil
+        categoryRepository: CategoryRepositoryProtocol? = nil,
+        modelContainer: ModelContainer? = nil
     ) {
-        let seedCategories = SeedData.defaultCategories
-        let seedNotes = SeedData.defaultNotes(categories: seedCategories)
-        self.noteRepository = noteRepository ?? InMemoryNoteRepository(seedNotes: seedNotes)
-        self.categoryRepository = categoryRepository ?? InMemoryCategoryRepository(seedCategories: seedCategories)
+        if let noteRepo = noteRepository, let categoryRepo = categoryRepository {
+            self.noteRepository = noteRepo
+            self.categoryRepository = categoryRepo
+        } else if let container = modelContainer ?? Self.createDefaultContainer() {
+            self.categoryRepository = SwiftDataCategoryRepository(container: container)
+            self.noteRepository = SwiftDataNoteRepository(container: container, categoryRepository: self.categoryRepository)
+        } else {
+            let seedCategories = SeedData.defaultCategories
+            let seedNotes = SeedData.defaultNotes(categories: seedCategories)
+            self.categoryRepository = InMemoryCategoryRepository(seedCategories: seedCategories)
+            self.noteRepository = InMemoryNoteRepository(seedNotes: seedNotes)
+        }
         self.getNotesUseCase = GetNotesUseCase(repository: self.noteRepository)
+        self.getNoteUseCase = GetNoteUseCase(repository: self.noteRepository)
         self.saveNoteUseCase = SaveNoteUseCase(repository: self.noteRepository)
         self.deleteNoteUseCase = DeleteNoteUseCase(repository: self.noteRepository)
         self.getCategoriesUseCase = GetCategoriesUseCase(repository: self.categoryRepository)
+    }
+
+    private static func createDefaultContainer() -> ModelContainer? {
+        try? ModelContainer(for: NoteModel.self, CategoryModel.self)
+    }
+
+    /// Seeds default categories and notes if the store is empty. Call once at launch when using SwiftData.
+    func seedIfNeeded() async {
+        do {
+            let notes = try await getNotesUseCase.execute()
+            guard notes.isEmpty else { return }
+            for category in SeedData.defaultCategories {
+                try await categoryRepository.addCategory(category)
+            }
+            let categories = try await getCategoriesUseCase.execute()
+            for note in SeedData.defaultNotes(categories: categories) {
+                try await saveNoteUseCase.execute(note: note)
+            }
+        } catch {
+            // Ignore seed errors (e.g. already seeded)
+        }
     }
 
     // MARK: - ViewModel Factories
@@ -54,7 +87,12 @@ final class AppDependencies {
     }
 
     func makeNoteDetailViewModel(note: Note) -> NoteDetailViewModel {
-        NoteDetailViewModel(note: note, deleteNoteUseCase: deleteNoteUseCase, saveNoteUseCase: saveNoteUseCase)
+        NoteDetailViewModel(
+            note: note,
+            getNoteUseCase: getNoteUseCase,
+            deleteNoteUseCase: deleteNoteUseCase,
+            saveNoteUseCase: saveNoteUseCase
+        )
     }
 
     func makeCategoryListViewModel() -> CategoryListViewModel {

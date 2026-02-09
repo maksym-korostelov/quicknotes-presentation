@@ -56,5 +56,8 @@ struct ContentView: View {
                 hasCompletedOnboarding = true
             })
         }
+        .task {
+            await dependencies.seedIfNeeded()
+        }
     }
 }
