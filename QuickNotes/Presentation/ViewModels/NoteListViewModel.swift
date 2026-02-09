@@ -15,10 +15,28 @@ final class NoteListViewModel {
     /// Currently selected category filter (nil = show all).
     var selectedCategoryId: UUID?
     
-    /// Notes to display after applying category filter and sort.
+    /// Search query; notes are filtered by title or content (case-insensitive).
+    var searchQuery: String = ""
+    
+    /// Notes to display after applying category filter, search, and sort.
     var filteredNotes: [Note] {
-        guard let categoryId = selectedCategoryId else { return notes }
-        return notes.filter { $0.category?.id == categoryId }
+        var result = notes
+        if let categoryId = selectedCategoryId {
+            result = result.filter { $0.category?.id == categoryId }
+        }
+        let query = searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !query.isEmpty {
+            result = result.filter {
+                $0.title.localizedCaseInsensitiveContains(query) ||
+                $0.content.localizedCaseInsensitiveContains(query)
+            }
+        }
+        return result
+    }
+    
+    /// True when the user has entered a non-empty search query.
+    var isSearching: Bool {
+        !searchQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
     
     /// Categories for the filter picker (loaded from use case).

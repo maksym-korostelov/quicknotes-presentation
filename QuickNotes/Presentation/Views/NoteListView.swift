@@ -102,6 +102,7 @@ struct NoteListView: View {
                 ) {
                     noteRow(note)
                 }
+                .listRowBackground(noteRowGlassBackground)
             }
             .onDelete { indexSet in
                 Task {
@@ -131,7 +132,7 @@ struct NoteListView: View {
         }
     }
 
-    // MARK: - Filter Section
+    // MARK: - Filter Section (Liquid Glass)
 
     private var filterSection: some View {
         Section {
@@ -144,6 +145,18 @@ struct NoteListView: View {
             }
             .labelsHidden()
         }
+        .listRowBackground(
+            Group {
+                if #available(iOS 26.0, *) {
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(.clear)
+                        .glassEffect(in: .rect(cornerRadius: 16))
+                } else {
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(.ultraThinMaterial)
+                }
+            }
+        )
     }
 
     private var filterPickerSelection: Binding<UUID?> {
@@ -154,6 +167,19 @@ struct NoteListView: View {
             get: { viewModel.selectedCategoryId },
             set: { viewModel.selectedCategoryId = $0 }
         )
+    }
+
+    /// Liquid glass background for note list rows (iOS 26+).
+    @ViewBuilder
+    private var noteRowGlassBackground: some View {
+        if #available(iOS 26.0, *) {
+            RoundedRectangle(cornerRadius: 12)
+                .fill(.clear)
+                .glassEffect(in: .rect(cornerRadius: 12))
+        } else {
+            RoundedRectangle(cornerRadius: 12)
+                .fill(.ultraThinMaterial)
+        }
     }
 
     // MARK: - Note Row
