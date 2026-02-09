@@ -16,6 +16,7 @@ struct NoteEditorView: View {
                 titleSection
                 contentSection
                 categorySection
+                pinSection
             }
             .navigationTitle("Edit Note")
             .navigationBarTitleDisplayMode(.inline)
@@ -111,6 +112,22 @@ struct NoteEditorView: View {
                 .font(.headline)
         } footer: {
             Text("Organize your note by assigning a category")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    // MARK: - Pin Section
+
+    private var pinSection: some View {
+        Section {
+            Toggle("Pin to top", isOn: $viewModel.isPinned)
+                .font(.body)
+        } header: {
+            Text("Pin")
+                .font(.headline)
+        } footer: {
+            Text("Pinned notes appear at the top of the list")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }

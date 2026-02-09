@@ -19,7 +19,7 @@ enum SeedData {
         let ideas = categories.first { $0.name == "Ideas" }
 
         return [
-            Note(title: "Welcome to QuickNotes", content: "This is your first note. Tap + to create more!", category: nil),
+            Note(title: "Welcome to QuickNotes", content: "This is your first note. Tap + to create more!", category: nil, isPinned: true),
             Note(title: "Shopping List", content: "Milk, Eggs, Bread, Butter", category: personal),
             Note(title: "Meeting Notes", content: "Discuss Q4 roadmap with the team.", category: work),
             Note(title: "Project Alpha ideas", content: "Consider dark mode, widgets, and offline sync.", category: ideas),

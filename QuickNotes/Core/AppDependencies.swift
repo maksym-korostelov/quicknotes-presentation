@@ -54,10 +54,17 @@ final class AppDependencies {
     }
 
     func makeNoteDetailViewModel(note: Note) -> NoteDetailViewModel {
-        NoteDetailViewModel(note: note, deleteNoteUseCase: deleteNoteUseCase)
+        NoteDetailViewModel(note: note, deleteNoteUseCase: deleteNoteUseCase, saveNoteUseCase: saveNoteUseCase)
     }
 
     func makeCategoryListViewModel() -> CategoryListViewModel {
         CategoryListViewModel(getCategoriesUseCase: getCategoriesUseCase)
+    }
+
+    func makeProfileViewModel() -> ProfileViewModel {
+        ProfileViewModel(
+            getNotesUseCase: getNotesUseCase,
+            getCategoriesUseCase: getCategoriesUseCase
+        )
     }
 }

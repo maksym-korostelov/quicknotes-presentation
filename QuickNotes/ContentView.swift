@@ -38,7 +38,7 @@ struct ContentView: View {
             }
 
             Tab("Profile", systemImage: "person.circle", value: 3) {
-                ProfileView(viewModel: ProfileViewModel())
+                ProfileView(viewModel: dependencies.makeProfileViewModel())
             }
 
             Tab(value: 4, role: .search) {

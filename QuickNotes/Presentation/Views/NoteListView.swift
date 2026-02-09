@@ -186,9 +186,16 @@ struct NoteListView: View {
 
     private func noteRow(_ note: Note) -> some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text(note.title)
-                .font(.headline)
-                .lineLimit(1)
+            HStack(spacing: 6) {
+                if note.isPinned {
+                    Image(systemName: "pin.fill")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
+                Text(note.title)
+                    .font(.headline)
+                    .lineLimit(1)
+            }
 
             Text(note.content)
                 .font(.subheadline)

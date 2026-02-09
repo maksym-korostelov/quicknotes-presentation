@@ -20,6 +20,12 @@ struct ProfileView: View {
                 .padding()
             }
             .navigationTitle("Profile")
+            .task {
+                await viewModel.loadProfile()
+            }
+            .refreshable {
+                await viewModel.loadProfile()
+            }
         }
     }
 

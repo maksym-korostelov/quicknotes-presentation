@@ -30,6 +30,13 @@ struct OnboardingView: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            HStack {
+                Spacer()
+                skipButton
+                    .padding(.trailing, 20)
+                    .padding(.top, 12)
+            }
+
             TabView(selection: $currentPage) {
                 ForEach(Array(pages.enumerated()), id: \.offset) { index, page in
                     onboardingPageView(page)
@@ -42,6 +49,16 @@ struct OnboardingView: View {
             actionButton
         }
         .padding(.bottom, 32)
+    }
+
+    // MARK: - Skip Button
+
+    private var skipButton: some View {
+        Button("Skip") {
+            onComplete()
+        }
+        .font(.body)
+        .foregroundStyle(.secondary)
     }
 
     // MARK: - Page Content

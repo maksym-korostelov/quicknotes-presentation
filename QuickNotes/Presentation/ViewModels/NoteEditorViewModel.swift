@@ -11,6 +11,7 @@ final class NoteEditorViewModel {
     var title: String
     var content: String
     var selectedCategory: Category?
+    var isPinned: Bool
     private(set) var isLoading = false
     private(set) var isSaved = false
     private(set) var errorMessage: String?
@@ -33,6 +34,7 @@ final class NoteEditorViewModel {
         self.title = note?.title ?? ""
         self.content = note?.content ?? ""
         self.selectedCategory = note?.category
+        self.isPinned = note?.isPinned ?? false
         self.saveNoteUseCase = saveNoteUseCase
         self.getCategoriesUseCase = getCategoriesUseCase
     }
@@ -58,6 +60,7 @@ final class NoteEditorViewModel {
                 title: title,
                 content: content,
                 category: selectedCategory,
+                isPinned: isPinned,
                 createdAt: existingNote?.createdAt ?? Date(),
                 modifiedAt: Date()
             )

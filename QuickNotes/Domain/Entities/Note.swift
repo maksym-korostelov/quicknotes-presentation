@@ -16,6 +16,9 @@ struct Note: Identifiable, Codable, Equatable {
 
     /// Category associated with the note
     let category: Category?
+
+    /// When true, the note is shown at the top of the list (pinned).
+    let isPinned: Bool
     
     /// Date when the note was created
     let createdAt: Date
@@ -29,11 +32,12 @@ struct Note: Identifiable, Codable, Equatable {
 extension Note {
     
     /// Creates a new note with auto-generated ID and current timestamps.
-    init(title: String, content: String, category: Category? = nil) {
+    init(title: String, content: String, category: Category? = nil, isPinned: Bool = false) {
         self.id = UUID()
         self.title = title
         self.content = content
         self.category = category
+        self.isPinned = isPinned
         self.createdAt = Date()
         self.modifiedAt = Date()
     }

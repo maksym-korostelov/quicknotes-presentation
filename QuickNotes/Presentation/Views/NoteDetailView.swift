@@ -34,10 +34,17 @@ struct NoteDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
-                Button(role: .destructive) {
-                    showDeleteConfirmation = true
-                } label: {
-                    Image(systemName: "trash")
+                HStack(spacing: 16) {
+                    Button {
+                        Task { await viewModel.togglePin() }
+                    } label: {
+                        Image(systemName: viewModel.note.isPinned ? "pin.fill" : "pin.slash")
+                    }
+                    Button(role: .destructive) {
+                        showDeleteConfirmation = true
+                    } label: {
+                        Image(systemName: "trash")
+                    }
                 }
             }
             ToolbarItem(placement: .navigationBarTrailing) {

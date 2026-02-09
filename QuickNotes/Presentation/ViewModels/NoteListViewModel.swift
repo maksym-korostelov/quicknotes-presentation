@@ -18,7 +18,7 @@ final class NoteListViewModel {
     /// Search query; notes are filtered by title or content (case-insensitive).
     var searchQuery: String = ""
     
-    /// Notes to display after applying category filter, search, and sort.
+    /// Notes to display after applying category filter, search, and sort. Pinned notes appear first.
     var filteredNotes: [Note] {
         var result = notes
         if let categoryId = selectedCategoryId {
@@ -31,7 +31,10 @@ final class NoteListViewModel {
                 $0.content.localizedCaseInsensitiveContains(query)
             }
         }
-        return result
+        return result.sorted { n1, n2 in
+            if n1.isPinned != n2.isPinned { return n1.isPinned }
+            return n1.modifiedAt > n2.modifiedAt
+        }
     }
     
     /// True when the user has entered a non-empty search query.

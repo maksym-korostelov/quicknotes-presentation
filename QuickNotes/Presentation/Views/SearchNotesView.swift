@@ -14,10 +14,18 @@ struct SearchNotesView: View {
 
     private var filteredNotes: [Note] {
         let query = searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !query.isEmpty else { return notes }
-        return notes.filter {
-            $0.title.localizedCaseInsensitiveContains(query) ||
-            $0.content.localizedCaseInsensitiveContains(query)
+        let result: [Note]
+        if query.isEmpty {
+            result = notes
+        } else {
+            result = notes.filter {
+                $0.title.localizedCaseInsensitiveContains(query) ||
+                $0.content.localizedCaseInsensitiveContains(query)
+            }
+        }
+        return result.sorted { n1, n2 in
+            if n1.isPinned != n2.isPinned { return n1.isPinned }
+            return n1.modifiedAt > n2.modifiedAt
         }
     }
 
@@ -65,15 +73,28 @@ struct SearchNotesView: View {
     // MARK: - Empty State
 
     private var emptyStateView: some View {
-        ContentUnavailableView {
-            Label("No Notes", systemImage: "magnifyingglass")
-        } description: {
-            Text(
-                searchQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                    ? "Enter a search term to find notes."
-                    : "No notes match \"\(searchQuery)\"."
+        let query = searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        let hasSearchQuery = !query.isEmpty
+        let hasNoNotesAtAll = notes.isEmpty
+
+        return ContentUnavailableView {
+            Label(
+                hasNoNotesAtAll && !hasSearchQuery ? "No Notes Yet" : "No Notes",
+                systemImage: hasNoNotesAtAll && !hasSearchQuery ? "note.text" : "magnifyingglass"
             )
+        } description: {
+            Text(emptyStateDescription(query: query, hasSearchQuery: hasSearchQuery, hasNoNotesAtAll: hasNoNotesAtAll))
         }
+    }
+
+    private func emptyStateDescription(query: String, hasSearchQuery: Bool, hasNoNotesAtAll: Bool) -> String {
+        if hasNoNotesAtAll && !hasSearchQuery {
+            return "Create your first note from the Notes tab."
+        }
+        if hasSearchQuery {
+            return "No notes match \"\(query)\"."
+        }
+        return "Enter a search term to find notes."
     }
 
     // MARK: - Results List
