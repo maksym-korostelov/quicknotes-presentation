@@ -9,6 +9,7 @@ struct ContentView: View {
     @State private var selectedTabIndex = 0
     @State private var noteListFilterCategoryId: UUID?
     @State private var searchTabQuery = ""
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
 
     // MARK: - Body
 
@@ -46,6 +47,14 @@ struct ContentView: View {
                 }
                 .searchable(text: $searchTabQuery, prompt: "Search notes by title or content")
             }
+        }
+        .fullScreenCover(isPresented: Binding(
+            get: { !hasCompletedOnboarding },
+            set: { if $0 == false { hasCompletedOnboarding = true } }
+        )) {
+            OnboardingView(onComplete: {
+                hasCompletedOnboarding = true
+            })
         }
     }
 }

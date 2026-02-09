@@ -119,6 +119,20 @@ struct SettingsView: View {
 
     private var aboutSection: some View {
         Section {
+            NavigationLink {
+                AboutView()
+            } label: {
+                Text("About QuickNotes")
+                    .font(.body)
+            }
+
+            NavigationLink {
+                HelpView()
+            } label: {
+                Text("Help")
+                    .font(.body)
+            }
+
             HStack {
                 Text("Version")
                     .font(.body)
