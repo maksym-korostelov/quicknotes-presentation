@@ -35,4 +35,9 @@ final class CategoryListViewModel {
         }
         isLoading = false
     }
+
+    /// Clears the current error message (e.g. after user dismisses alert).
+    func clearError() {
+        errorMessage = nil
+    }
 }

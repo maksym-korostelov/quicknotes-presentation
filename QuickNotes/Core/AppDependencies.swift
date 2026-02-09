@@ -20,24 +20,28 @@ final class AppDependencies {
     // MARK: - Initialization
 
     init(
-        noteRepository: NoteRepositoryProtocol = InMemoryNoteRepository(),
-        categoryRepository: CategoryRepositoryProtocol = InMemoryCategoryRepository()
+        noteRepository: NoteRepositoryProtocol? = nil,
+        categoryRepository: CategoryRepositoryProtocol? = nil
     ) {
-        self.noteRepository = noteRepository
-        self.categoryRepository = categoryRepository
-        self.getNotesUseCase = GetNotesUseCase(repository: noteRepository)
-        self.saveNoteUseCase = SaveNoteUseCase(repository: noteRepository)
-        self.deleteNoteUseCase = DeleteNoteUseCase(repository: noteRepository)
-        self.getCategoriesUseCase = GetCategoriesUseCase(repository: categoryRepository)
+        let seedCategories = SeedData.defaultCategories
+        let seedNotes = SeedData.defaultNotes(categories: seedCategories)
+        self.noteRepository = noteRepository ?? InMemoryNoteRepository(seedNotes: seedNotes)
+        self.categoryRepository = categoryRepository ?? InMemoryCategoryRepository(seedCategories: seedCategories)
+        self.getNotesUseCase = GetNotesUseCase(repository: self.noteRepository)
+        self.saveNoteUseCase = SaveNoteUseCase(repository: self.noteRepository)
+        self.deleteNoteUseCase = DeleteNoteUseCase(repository: self.noteRepository)
+        self.getCategoriesUseCase = GetCategoriesUseCase(repository: self.categoryRepository)
     }
 
     // MARK: - ViewModel Factories
 
-    func makeNoteListViewModel() -> NoteListViewModel {
+    func makeNoteListViewModel(initialCategoryFilter: UUID? = nil) -> NoteListViewModel {
         NoteListViewModel(
             getNotesUseCase: getNotesUseCase,
+            getCategoriesUseCase: getCategoriesUseCase,
             saveNoteUseCase: saveNoteUseCase,
-            deleteNoteUseCase: deleteNoteUseCase
+            deleteNoteUseCase: deleteNoteUseCase,
+            initialCategoryFilter: initialCategoryFilter
         )
     }
 

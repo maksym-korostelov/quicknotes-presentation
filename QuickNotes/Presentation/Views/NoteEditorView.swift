@@ -48,6 +48,16 @@ struct NoteEditorView: View {
                         .font(.subheadline)
                 }
             }
+            .alert("Error", isPresented: Binding(
+                get: { viewModel.errorMessage != nil },
+                set: { if !$0 { viewModel.clearError() } }
+            )) {
+                Button("OK") { viewModel.clearError() }
+            } message: {
+                if let message = viewModel.errorMessage {
+                    Text(message)
+                }
+            }
         }
     }
 

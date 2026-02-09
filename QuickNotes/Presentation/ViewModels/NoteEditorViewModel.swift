@@ -72,4 +72,9 @@ final class NoteEditorViewModel {
     var isValid: Bool {
         !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
+
+    /// Clears the current error message (e.g. after user dismisses alert).
+    func clearError() {
+        errorMessage = nil
+    }
 }

@@ -14,6 +14,7 @@ struct SettingsView: View {
             Form {
                 appearanceSection
                 notificationsSection
+                sortOrderSection
                 dataSection
                 aboutSection
             }
@@ -48,6 +49,28 @@ struct SettingsView: View {
                 .font(.caption)
         } footer: {
             Text("Manage how QuickNotes sends you notifications")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    // MARK: - Sort Order Section
+
+    @AppStorage("sortOrder") private var sortOrderRaw = SettingsViewModel.SortOrder.dateDescending.rawValue
+
+    private var sortOrderSection: some View {
+        Section {
+            Picker("Sort notes by", selection: $sortOrderRaw) {
+                ForEach(SettingsViewModel.SortOrder.allCases, id: \.self) { order in
+                    Text(order.rawValue).tag(order.rawValue)
+                }
+            }
+            .font(.body)
+        } header: {
+            Text("Sort Order")
+                .font(.caption)
+        } footer: {
+            Text("Applies to the order of notes in the Notes tab")
                 .font(.caption2)
                 .foregroundStyle(.secondary)
         }

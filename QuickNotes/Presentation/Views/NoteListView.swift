@@ -7,13 +7,17 @@ struct NoteListView: View {
 
     @State private var viewModel: NoteListViewModel
     @State private var showingAddNote = false
+    @AppStorage("sortOrder") private var sortOrderRaw = SettingsViewModel.SortOrder.dateDescending.rawValue
     private let dependencies: AppDependencies
+    /// When provided (e.g. from ContentView), filter is synced with this binding so Categories tab can switch here with a preset filter.
+    private var filterCategoryIdBinding: Binding<UUID?>?
 
     // MARK: - Initialization
 
-    init(viewModel: NoteListViewModel, dependencies: AppDependencies) {
+    init(viewModel: NoteListViewModel, dependencies: AppDependencies, filterCategoryIdBinding: Binding<UUID?>? = nil) {
         _viewModel = State(initialValue: viewModel)
         self.dependencies = dependencies
+        self.filterCategoryIdBinding = filterCategoryIdBinding
     }
 
     // MARK: - Body
@@ -24,13 +28,14 @@ struct NoteListView: View {
                 if viewModel.isLoading {
                     ProgressView("Loading notes...")
                         .font(.subheadline)
-                } else if viewModel.notes.isEmpty {
-                    emptyStateView
                 } else {
                     noteListContent
                 }
             }
-            .navigationTitle("My Notes")
+            .refreshable {
+                await viewModel.loadNotes(sortOrder: SettingsViewModel.SortOrder(rawValue: sortOrderRaw) ?? .dateDescending)
+            }
+            .navigationTitle(navigationTitle)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: { showingAddNote = true }) {
@@ -40,41 +45,55 @@ struct NoteListView: View {
                 }
             }
             .sheet(isPresented: $showingAddNote, onDismiss: {
-                Task { await viewModel.loadNotes() }
+                Task { await viewModel.loadNotes(sortOrder: SettingsViewModel.SortOrder(rawValue: sortOrderRaw) ?? .dateDescending) }
             }) {
                 NoteEditorView(viewModel: dependencies.makeNoteEditorViewModel())
             }
             .task {
-                await viewModel.loadNotes()
+                await viewModel.loadNotes(sortOrder: SettingsViewModel.SortOrder(rawValue: sortOrderRaw) ?? .dateDescending)
+            }
+            .onChange(of: sortOrderRaw) { _, _ in
+                Task {
+                    await viewModel.loadNotes(sortOrder: SettingsViewModel.SortOrder(rawValue: sortOrderRaw) ?? .dateDescending)
+                }
+            }
+            .alert("Error", isPresented: Binding(
+                get: { viewModel.errorMessage != nil },
+                set: { if !$0 { viewModel.clearError() } }
+            )) {
+                Button("OK") { viewModel.clearError() }
+            } message: {
+                if let message = viewModel.errorMessage {
+                    Text(message)
+                }
+            }
+            .task {
+                await viewModel.loadCategories()
+            }
+            .onAppear {
+                if let binding = filterCategoryIdBinding {
+                    viewModel.selectedCategoryId = binding.wrappedValue
+                }
+            }
+            .onChange(of: filterCategoryIdBinding?.wrappedValue) { _, newValue in
+                viewModel.selectedCategoryId = newValue
             }
         }
     }
 
-    // MARK: - Empty State
-
-    private var emptyStateView: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "note.text")
-                .font(.system(size: 56))
-                .foregroundStyle(.secondary)
-
-            Text("No Notes Yet")
-                .font(.title2)
-                .fontWeight(.semibold)
-
-            Text("Tap the + button to create your first note")
-                .font(.body)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-        }
-        .padding()
+    private var navigationTitle: String {
+        "My Notes"
     }
 
     // MARK: - Note List
 
     private var noteListContent: some View {
         List {
-            ForEach(viewModel.notes) { note in
+            filterSection
+            if viewModel.filteredNotes.isEmpty {
+                emptyStateInListSection
+            }
+            ForEach(viewModel.filteredNotes) { note in
                 NavigationLink(
                     destination: NoteDetailView(
                         viewModel: dependencies.makeNoteDetailViewModel(note: note),
@@ -87,13 +106,54 @@ struct NoteListView: View {
             .onDelete { indexSet in
                 Task {
                     for index in indexSet {
-                        let note = viewModel.notes[index]
+                        let note = viewModel.filteredNotes[index]
                         await viewModel.deleteNote(id: note.id)
                     }
                 }
             }
         }
         .listStyle(.insetGrouped)
+    }
+
+    /// Shown inside the list when there are no notes to show (so filter stays visible on main tab).
+    private var emptyStateInListSection: some View {
+        Section {
+            VStack(spacing: 8) {
+                Text(viewModel.selectedCategoryId != nil ? "No notes in this category" : "No notes yet")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                Text(viewModel.selectedCategoryId != nil ? "Choose \"All\" above to see all notes" : "Tap the + button to create your first note")
+                    .font(.caption)
+                    .foregroundStyle(.tertiary)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 8)
+        }
+    }
+
+    // MARK: - Filter Section
+
+    private var filterSection: some View {
+        Section {
+            Picker("Category", selection: filterPickerSelection) {
+                Text("All").tag(nil as UUID?)
+                ForEach(viewModel.categories) { category in
+                    Label(category.name, systemImage: category.icon)
+                        .tag(category.id as UUID?)
+                }
+            }
+            .labelsHidden()
+        }
+    }
+
+    private var filterPickerSelection: Binding<UUID?> {
+        if let binding = filterCategoryIdBinding {
+            return binding
+        }
+        return Binding(
+            get: { viewModel.selectedCategoryId },
+            set: { viewModel.selectedCategoryId = $0 }
+        )
     }
 
     // MARK: - Note Row

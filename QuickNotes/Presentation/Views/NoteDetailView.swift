@@ -6,6 +6,8 @@ struct NoteDetailView: View {
     // MARK: - Properties
 
     @State private var viewModel: NoteDetailViewModel
+    @State private var showDeleteConfirmation = false
+    @Environment(\.dismiss) private var dismiss
     private let dependencies: AppDependencies
 
     // MARK: - Initialization
@@ -31,6 +33,13 @@ struct NoteDetailView: View {
         .navigationTitle("Note")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(role: .destructive) {
+                    showDeleteConfirmation = true
+                } label: {
+                    Image(systemName: "trash")
+                }
+            }
             ToolbarItem(placement: .navigationBarTrailing) {
                 NavigationLink(
                     destination: NoteEditorView(
@@ -41,6 +50,29 @@ struct NoteDetailView: View {
                         .font(.body)
                         .fontWeight(.medium)
                 }
+            }
+        }
+        .confirmationDialog("Delete Note", isPresented: $showDeleteConfirmation, titleVisibility: .visible) {
+            Button("Delete", role: .destructive) {
+                Task {
+                    await viewModel.deleteNote()
+                    if viewModel.errorMessage == nil {
+                        dismiss()
+                    }
+                }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This note will be permanently deleted.")
+        }
+        .alert("Error", isPresented: Binding(
+            get: { viewModel.errorMessage != nil },
+            set: { if !$0 { viewModel.clearError() } }
+        )) {
+            Button("OK") { viewModel.clearError() }
+        } message: {
+            if let message = viewModel.errorMessage {
+                Text(message)
             }
         }
     }
