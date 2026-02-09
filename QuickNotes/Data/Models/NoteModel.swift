@@ -12,15 +12,22 @@ final class NoteModel {
     var content: String
     var categoryId: UUID?
     var isPinned: Bool
+    /// Optional so existing stores (created before this attribute) can load; nil is treated as false.
+    var isArchived: Bool?
+    /// Optional so existing stores (created before this attribute) can load; nil is treated as false.
+    var isCompleted: Bool?
+
     var createdAt: Date
     var modifiedAt: Date
 
-    init(noteId: UUID, title: String, content: String, categoryId: UUID?, isPinned: Bool, createdAt: Date, modifiedAt: Date) {
+    init(noteId: UUID, title: String, content: String, categoryId: UUID?, isPinned: Bool, isArchived: Bool?, isCompleted: Bool?, createdAt: Date, modifiedAt: Date) {
         self.noteId = noteId
         self.title = title
         self.content = content
         self.categoryId = categoryId
         self.isPinned = isPinned
+        self.isArchived = isArchived
+        self.isCompleted = isCompleted
         self.createdAt = createdAt
         self.modifiedAt = modifiedAt
     }
@@ -34,6 +41,8 @@ final class NoteModel {
             content: content,
             category: category,
             isPinned: isPinned,
+            isArchived: isArchived ?? false,
+            isCompleted: isCompleted ?? false,
             createdAt: createdAt,
             modifiedAt: modifiedAt
         )
@@ -47,6 +56,8 @@ final class NoteModel {
             content: note.content,
             categoryId: note.category?.id,
             isPinned: note.isPinned,
+            isArchived: note.isArchived,
+            isCompleted: note.isCompleted,
             createdAt: note.createdAt,
             modifiedAt: note.modifiedAt
         )

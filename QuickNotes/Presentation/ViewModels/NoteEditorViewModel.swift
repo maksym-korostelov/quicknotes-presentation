@@ -61,6 +61,8 @@ final class NoteEditorViewModel {
                 content: content,
                 category: selectedCategory,
                 isPinned: isPinned,
+                isArchived: existingNote?.isArchived ?? false,
+                isCompleted: existingNote?.isCompleted ?? false,
                 createdAt: existingNote?.createdAt ?? Date(),
                 modifiedAt: Date()
             )

@@ -120,16 +120,28 @@ struct NoteListView: View {
     private var emptyStateInListSection: some View {
         Section {
             VStack(spacing: 8) {
-                Text(viewModel.selectedCategoryId != nil ? "No notes in this category" : "No notes yet")
+                Text(emptyStateTitle)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
-                Text(viewModel.selectedCategoryId != nil ? "Choose \"All\" above to see all notes" : "Tap the + button to create your first note")
+                Text(emptyStateSubtitle)
                     .font(.caption)
                     .foregroundStyle(.tertiary)
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 8)
         }
+    }
+
+    private var emptyStateTitle: String {
+        if viewModel.showArchivedAndCompleted { return "No notes" }
+        if viewModel.selectedCategoryId != nil { return "No notes in this category" }
+        return "No notes yet"
+    }
+
+    private var emptyStateSubtitle: String {
+        if viewModel.showArchivedAndCompleted { return "Archived and completed notes will appear here when you add them." }
+        if viewModel.selectedCategoryId != nil { return "Choose \"All\" above to see all notes" }
+        return "Tap the + button to create your first note"
     }
 
     // MARK: - Filter Section (Liquid Glass)
@@ -144,6 +156,8 @@ struct NoteListView: View {
                 }
             }
             .labelsHidden()
+
+            Toggle("Show archived & completed", isOn: $viewModel.showArchivedAndCompleted)
         }
         .listRowBackground(
             Group {
@@ -185,37 +199,82 @@ struct NoteListView: View {
     // MARK: - Note Row
 
     private func noteRow(_ note: Note) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack(spacing: 6) {
-                if note.isPinned {
-                    Image(systemName: "pin.fill")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                }
-                Text(note.title)
-                    .font(.headline)
-                    .lineLimit(1)
+        HStack(alignment: .top, spacing: 10) {
+            if note.isArchived || note.isCompleted {
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(noteStatusAccentColor(note))
+                    .frame(width: 4)
+                    .frame(maxHeight: .infinity)
             }
 
-            Text(note.content)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .lineLimit(2)
-
-            HStack {
-                if let category = note.category {
-                    Label(category.name, systemImage: category.icon)
-                        .font(.caption)
-                        .foregroundStyle(.blue)
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(spacing: 6) {
+                    if note.isPinned {
+                        Image(systemName: "pin.fill")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                    Text(note.title)
+                        .font(.headline)
+                        .lineLimit(1)
+                        .strikethrough(note.isCompleted, color: .secondary)
+                    Spacer(minLength: 4)
+                    noteStatusBadges(note)
                 }
 
-                Spacer()
+                Text(note.content)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(2)
+                    .strikethrough(note.isCompleted, color: .secondary)
 
-                Text(note.modifiedAt.formatted(date: .abbreviated, time: .shortened))
-                    .font(.caption2)
-                    .foregroundStyle(.tertiary)
+                HStack {
+                    if let category = note.category {
+                        Label(category.name, systemImage: category.icon)
+                            .font(.caption)
+                            .foregroundStyle(.blue)
+                    }
+
+                    Spacer()
+
+                    Text(note.modifiedAt.formatted(date: .abbreviated, time: .shortened))
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
+                }
             }
         }
         .padding(.vertical, 4)
+        .opacity(note.isArchived ? 0.8 : 1)
+    }
+
+    @ViewBuilder
+    private func noteStatusBadges(_ note: Note) -> some View {
+        HStack(spacing: 6) {
+            if note.isArchived {
+                Label("Archived", systemImage: "archivebox.fill")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 3)
+                    .background(.quaternary)
+                    .clipShape(Capsule())
+            }
+            if note.isCompleted {
+                Label("Completed", systemImage: "checkmark.circle.fill")
+                    .font(.caption2)
+                    .foregroundStyle(.green)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 3)
+                    .background(.green.opacity(0.15))
+                    .clipShape(Capsule())
+            }
+        }
+    }
+
+    private func noteStatusAccentColor(_ note: Note) -> Color {
+        if note.isCompleted && note.isArchived { return .orange }
+        if note.isCompleted { return .green }
+        if note.isArchived { return .gray }
+        return .clear
     }
 }

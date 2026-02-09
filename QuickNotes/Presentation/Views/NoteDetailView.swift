@@ -40,6 +40,18 @@ struct NoteDetailView: View {
                     } label: {
                         Image(systemName: viewModel.note.isPinned ? "pin.fill" : "pin.slash")
                     }
+                    Button {
+                        Task { await viewModel.toggleArchive() }
+                    } label: {
+                        Image(systemName: viewModel.note.isArchived ? "archivebox.fill" : "archivebox")
+                    }
+                    .help(viewModel.note.isArchived ? "Unarchive" : "Archive")
+                    Button {
+                        Task { await viewModel.toggleCompleted() }
+                    } label: {
+                        Image(systemName: viewModel.note.isCompleted ? "checkmark.circle.fill" : "checkmark.circle")
+                    }
+                    .help(viewModel.note.isCompleted ? "Mark incomplete" : "Mark completed")
                     Button(role: .destructive) {
                         showDeleteConfirmation = true
                     } label: {

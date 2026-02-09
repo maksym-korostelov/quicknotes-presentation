@@ -14,13 +14,19 @@ final class NoteListViewModel {
     
     /// Currently selected category filter (nil = show all).
     var selectedCategoryId: UUID?
+
+    /// When true, the list includes archived and completed notes; otherwise they are hidden.
+    var showArchivedAndCompleted = false
     
     /// Search query; notes are filtered by title or content (case-insensitive).
     var searchQuery: String = ""
     
-    /// Notes to display after applying category filter, search, and sort. Pinned notes appear first.
+    /// Notes to display after applying category filter, search, archived filter, and sort. Pinned notes appear first.
     var filteredNotes: [Note] {
         var result = notes
+        if !showArchivedAndCompleted {
+            result = result.filter { !$0.isArchived && !$0.isCompleted }
+        }
         if let categoryId = selectedCategoryId {
             result = result.filter { $0.category?.id == categoryId }
         }

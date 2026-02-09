@@ -43,6 +43,8 @@ final class SwiftDataNoteRepository: NoteRepositoryProtocol {
             first.content = note.content
             first.categoryId = note.category?.id
             first.isPinned = note.isPinned
+            first.isArchived = note.isArchived
+            first.isCompleted = note.isCompleted
             first.modifiedAt = note.modifiedAt
         } else {
             let model = NoteModel.from(note)

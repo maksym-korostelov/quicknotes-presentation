@@ -57,6 +57,56 @@ final class NoteDetailViewModel {
                 content: note.content,
                 category: note.category,
                 isPinned: !note.isPinned,
+                isArchived: note.isArchived,
+                isCompleted: note.isCompleted,
+                createdAt: note.createdAt,
+                modifiedAt: Date()
+            )
+            try await saveNoteUseCase.execute(note: updated)
+            note = updated
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+        isLoading = false
+    }
+
+    @MainActor
+    func toggleArchive() async {
+        isLoading = true
+        errorMessage = nil
+        do {
+            let updated = Note(
+                id: note.id,
+                title: note.title,
+                content: note.content,
+                category: note.category,
+                isPinned: note.isPinned,
+                isArchived: !note.isArchived,
+                isCompleted: note.isCompleted,
+                createdAt: note.createdAt,
+                modifiedAt: Date()
+            )
+            try await saveNoteUseCase.execute(note: updated)
+            note = updated
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+        isLoading = false
+    }
+
+    @MainActor
+    func toggleCompleted() async {
+        isLoading = true
+        errorMessage = nil
+        do {
+            let updated = Note(
+                id: note.id,
+                title: note.title,
+                content: note.content,
+                category: note.category,
+                isPinned: note.isPinned,
+                isArchived: note.isArchived,
+                isCompleted: !note.isCompleted,
                 createdAt: note.createdAt,
                 modifiedAt: Date()
             )

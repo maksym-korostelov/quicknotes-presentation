@@ -19,6 +19,12 @@ struct Note: Identifiable, Codable, Equatable {
 
     /// When true, the note is shown at the top of the list (pinned).
     let isPinned: Bool
+
+    /// When true, the note is archived and hidden from the default list.
+    let isArchived: Bool
+
+    /// When true, the note is marked completed and hidden from the default list.
+    let isCompleted: Bool
     
     /// Date when the note was created
     let createdAt: Date
@@ -32,12 +38,14 @@ struct Note: Identifiable, Codable, Equatable {
 extension Note {
     
     /// Creates a new note with auto-generated ID and current timestamps.
-    init(title: String, content: String, category: Category? = nil, isPinned: Bool = false) {
+    init(title: String, content: String, category: Category? = nil, isPinned: Bool = false, isArchived: Bool = false, isCompleted: Bool = false) {
         self.id = UUID()
         self.title = title
         self.content = content
         self.category = category
         self.isPinned = isPinned
+        self.isArchived = isArchived
+        self.isCompleted = isCompleted
         self.createdAt = Date()
         self.modifiedAt = Date()
     }
