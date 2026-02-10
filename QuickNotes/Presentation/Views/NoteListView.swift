@@ -47,7 +47,7 @@ struct NoteListView: View {
             .sheet(isPresented: $showingAddNote, onDismiss: {
                 Task { await viewModel.loadNotes(sortOrder: SettingsViewModel.SortOrder(rawValue: sortOrderRaw) ?? .dateDescending) }
             }) {
-                NoteEditorView(viewModel: dependencies.makeNoteEditorViewModel())
+                NoteEditorView(viewModel: dependencies.makeNoteEditorViewModel(), showCancelButton: true)
             }
             .task {
                 await viewModel.loadNotes(sortOrder: SettingsViewModel.SortOrder(rawValue: sortOrderRaw) ?? .dateDescending)
@@ -232,7 +232,7 @@ struct NoteListView: View {
                     if let category = note.category {
                         Label(category.name, systemImage: category.icon)
                             .font(.caption)
-                            .foregroundStyle(.blue)
+                            .foregroundStyle(Color(hex: category.colorHex))
                     }
 
                     Spacer()

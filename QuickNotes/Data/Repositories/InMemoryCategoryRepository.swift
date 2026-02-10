@@ -44,6 +44,14 @@ final class InMemoryCategoryRepository: CategoryRepositoryProtocol {
         categories.append(category)
     }
 
+    func updateCategory(_ category: Category) async throws {
+        lock.lock()
+        defer { lock.unlock() }
+        if let index = categories.firstIndex(where: { $0.id == category.id }) {
+            categories[index] = category
+        }
+    }
+
     func deleteCategory(by id: UUID) async throws {
         lock.lock()
         defer { lock.unlock() }

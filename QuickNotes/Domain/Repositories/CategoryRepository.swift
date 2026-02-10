@@ -22,6 +22,11 @@ protocol CategoryRepositoryProtocol {
     /// - Throws: An error if the add operation fails.
     func addCategory(_ category: Category) async throws
 
+    /// Updates an existing category.
+    /// - Parameter category: The category with updated fields (same id).
+    /// - Throws: An error if the update operation fails.
+    func updateCategory(_ category: Category) async throws
+
     /// Deletes a category by its identifier.
     /// - Parameter id: The unique identifier of the category to delete.
     /// - Throws: An error if the delete operation fails.

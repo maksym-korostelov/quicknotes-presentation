@@ -18,6 +18,9 @@ final class AppDependencies {
     let saveNoteUseCase: SaveNoteUseCaseProtocol
     let deleteNoteUseCase: DeleteNoteUseCaseProtocol
     let getCategoriesUseCase: GetCategoriesUseCaseProtocol
+    let addCategoryUseCase: AddCategoryUseCaseProtocol
+    let updateCategoryUseCase: UpdateCategoryUseCaseProtocol
+    let deleteCategoryUseCase: DeleteCategoryUseCaseProtocol
 
     // MARK: - Initialization
 
@@ -43,6 +46,13 @@ final class AppDependencies {
         self.saveNoteUseCase = SaveNoteUseCase(repository: self.noteRepository)
         self.deleteNoteUseCase = DeleteNoteUseCase(repository: self.noteRepository)
         self.getCategoriesUseCase = GetCategoriesUseCase(repository: self.categoryRepository)
+        self.addCategoryUseCase = AddCategoryUseCase(repository: self.categoryRepository)
+        self.updateCategoryUseCase = UpdateCategoryUseCase(repository: self.categoryRepository)
+        self.deleteCategoryUseCase = DeleteCategoryUseCase(
+            categoryRepository: self.categoryRepository,
+            getNotesUseCase: self.getNotesUseCase,
+            saveNoteUseCase: self.saveNoteUseCase
+        )
     }
 
     private static func createDefaultContainer() -> ModelContainer? {
@@ -96,7 +106,20 @@ final class AppDependencies {
     }
 
     func makeCategoryListViewModel() -> CategoryListViewModel {
-        CategoryListViewModel(getCategoriesUseCase: getCategoriesUseCase)
+        CategoryListViewModel(
+            getCategoriesUseCase: getCategoriesUseCase,
+            addCategoryUseCase: addCategoryUseCase,
+            updateCategoryUseCase: updateCategoryUseCase,
+            deleteCategoryUseCase: deleteCategoryUseCase
+        )
+    }
+
+    func makeCategoryEditorViewModel(existingCategory: Category? = nil) -> CategoryEditorViewModel {
+        CategoryEditorViewModel(
+            existingCategory: existingCategory,
+            addCategoryUseCase: addCategoryUseCase,
+            updateCategoryUseCase: updateCategoryUseCase
+        )
     }
 
     func makeProfileViewModel() -> ProfileViewModel {

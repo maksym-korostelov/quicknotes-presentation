@@ -6,23 +6,26 @@ import Observation
 @Observable
 final class CategoryListViewModel {
 
-    // MARK: - Properties
-
     private(set) var categories: [Category] = []
     private(set) var isLoading = false
     private(set) var errorMessage: String?
 
-    // MARK: - Dependencies
-
     private let getCategoriesUseCase: GetCategoriesUseCaseProtocol
+    private let addCategoryUseCase: AddCategoryUseCaseProtocol
+    private let updateCategoryUseCase: UpdateCategoryUseCaseProtocol
+    private let deleteCategoryUseCase: DeleteCategoryUseCaseProtocol
 
-    // MARK: - Initialization
-
-    init(getCategoriesUseCase: GetCategoriesUseCaseProtocol) {
+    init(
+        getCategoriesUseCase: GetCategoriesUseCaseProtocol,
+        addCategoryUseCase: AddCategoryUseCaseProtocol,
+        updateCategoryUseCase: UpdateCategoryUseCaseProtocol,
+        deleteCategoryUseCase: DeleteCategoryUseCaseProtocol
+    ) {
         self.getCategoriesUseCase = getCategoriesUseCase
+        self.addCategoryUseCase = addCategoryUseCase
+        self.updateCategoryUseCase = updateCategoryUseCase
+        self.deleteCategoryUseCase = deleteCategoryUseCase
     }
-
-    // MARK: - Actions
 
     @MainActor
     func loadCategories() async {
@@ -36,7 +39,19 @@ final class CategoryListViewModel {
         isLoading = false
     }
 
-    /// Clears the current error message (e.g. after user dismisses alert).
+    @MainActor
+    func deleteCategory(id: UUID) async {
+        isLoading = true
+        errorMessage = nil
+        do {
+            try await deleteCategoryUseCase.execute(categoryId: id)
+            categories.removeAll { $0.id == id }
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+        isLoading = false
+    }
+
     func clearError() {
         errorMessage = nil
     }

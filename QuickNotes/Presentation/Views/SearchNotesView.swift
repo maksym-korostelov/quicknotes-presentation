@@ -132,7 +132,7 @@ struct SearchNotesView: View {
                 if let category = note.category {
                     Label(category.name, systemImage: category.icon)
                         .font(.caption)
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(Color(hex: category.colorHex))
                 }
 
                 Spacer()

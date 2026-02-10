@@ -34,6 +34,19 @@ final class SwiftDataCategoryRepository: CategoryRepositoryProtocol {
         try context.save()
     }
 
+    func updateCategory(_ category: Category) async throws {
+        let context = container.mainContext
+        var descriptor = FetchDescriptor<CategoryModel>(predicate: #Predicate { $0.categoryId == category.id })
+        descriptor.fetchLimit = 1
+        let models = try context.fetch(descriptor)
+        guard let model = models.first else { return }
+        model.name = category.name
+        model.icon = category.icon
+        model.colorHex = category.colorHex
+        model.modifiedAt = category.modifiedAt
+        try context.save()
+    }
+
     func deleteCategory(by id: UUID) async throws {
         let context = container.mainContext
         var descriptor = FetchDescriptor<CategoryModel>(predicate: #Predicate { $0.categoryId == id })

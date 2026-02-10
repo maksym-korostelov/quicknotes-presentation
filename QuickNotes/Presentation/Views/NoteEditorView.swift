@@ -8,6 +8,14 @@ struct NoteEditorView: View {
     @State var viewModel: NoteEditorViewModel
     @Environment(\.dismiss) private var dismiss
 
+    /// When true, shows a Cancel button (e.g. when presented as a sheet). When false, only the system back button is used (e.g. when pushed via NavigationLink).
+    private var showCancelButton: Bool
+
+    init(viewModel: NoteEditorViewModel, showCancelButton: Bool = false) {
+        _viewModel = State(initialValue: viewModel)
+        self.showCancelButton = showCancelButton
+    }
+
     // MARK: - Body
 
     var body: some View {
@@ -21,9 +29,11 @@ struct NoteEditorView: View {
             .navigationTitle("Edit Note")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
-                        dismiss()
+                if showCancelButton {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Cancel") {
+                            dismiss()
+                        }
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
@@ -95,18 +105,43 @@ struct NoteEditorView: View {
 
     private var categorySection: some View {
         Section {
-            Picker("Category", selection: $viewModel.selectedCategory) {
-                Text("None")
-                    .font(.body)
-                    .tag(nil as Category?)
+            Menu {
+                Button {
+                    viewModel.selectedCategory = nil
+                } label: {
+                    Label("None", systemImage: "xmark.circle")
+                }
 
                 ForEach(viewModel.categories) { category in
-                    Label(category.name, systemImage: category.icon)
-                        .font(.body)
-                        .tag(category as Category?)
+                    Button {
+                        viewModel.selectedCategory = category
+                    } label: {
+                        Label {
+                            Text(category.name)
+                        } icon: {
+                            Image(systemName: category.icon)
+                                .foregroundStyle(Color(hex: category.colorHex))
+                        }
+                    }
                 }
+            } label: {
+                HStack {
+                    if let category = viewModel.selectedCategory {
+                        Image(systemName: category.icon)
+                            .foregroundStyle(Color(hex: category.colorHex))
+                        Text(category.name)
+                            .foregroundStyle(.primary)
+                    } else {
+                        Text("None")
+                            .foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.up.chevron.down")
+                        .font(.caption)
+                        .foregroundStyle(.tertiary)
+                }
+                .font(.body)
             }
-            .font(.subheadline)
         } header: {
             Text("Category")
                 .font(.headline)

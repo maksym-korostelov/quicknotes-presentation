@@ -26,6 +26,7 @@ struct ContentView: View {
             Tab("Categories", systemImage: "folder", value: 1) {
                 CategoryListView(
                     viewModel: dependencies.makeCategoryListViewModel(),
+                    dependencies: dependencies,
                     onCategorySelected: { categoryId in
                         noteListFilterCategoryId = categoryId
                         selectedTabIndex = 0

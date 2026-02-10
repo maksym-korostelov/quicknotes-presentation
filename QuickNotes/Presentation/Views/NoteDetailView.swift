@@ -62,7 +62,8 @@ struct NoteDetailView: View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 NavigationLink(
                     destination: NoteEditorView(
-                        viewModel: dependencies.makeNoteEditorViewModel(note: viewModel.note)
+                        viewModel: dependencies.makeNoteEditorViewModel(note: viewModel.note),
+                        showCancelButton: false
                     )
                 ) {
                     Text("Edit")
@@ -110,10 +111,10 @@ struct NoteDetailView: View {
             if let category = viewModel.note.category {
                 Label(category.name, systemImage: category.icon)
                     .font(.subheadline)
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(Color(hex: category.colorHex))
                     .padding(.horizontal, 10)
                     .padding(.vertical, 4)
-                    .background(.blue.opacity(0.1))
+                    .background(Color(hex: category.colorHex).opacity(0.15))
                     .clipShape(Capsule())
             }
         }
