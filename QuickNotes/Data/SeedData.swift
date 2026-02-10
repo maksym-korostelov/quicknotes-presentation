@@ -19,16 +19,16 @@ enum SeedData {
         let ideas = categories.first { $0.name == "Ideas" }
 
         return [
-            Note(title: "Welcome to QuickNotes", content: "This is your first note. Tap + to create more!", category: nil, isPinned: true),
-            Note(title: "Shopping List", content: "Milk, Eggs, Bread, Butter", category: personal),
-            Note(title: "Meeting Notes", content: "Discuss Q4 roadmap with the team.", category: work),
-            Note(title: "Project Alpha ideas", content: "Consider dark mode, widgets, and offline sync.", category: ideas),
-            Note(title: "Weekly standup", content: "• Backend API on track\n• Design review Thursday\n• Deploy to staging Friday", category: work),
-            Note(title: "Books to read", content: "1. Deep Work\n2. Atomic Habits\n3. The Pragmatic Programmer", category: personal),
-            Note(title: "Feature brainstorm", content: "Tags, reminders, rich text, export to PDF.", category: ideas),
-            Note(title: "Vacation packing", content: "Passport, charger, adapters, meds, sunscreen.", category: personal),
-            Note(title: "Sprint retrospective", content: "What went well: shipping on time. Improve: earlier QA involvement.", category: work),
-            Note(title: "App name ideas", content: "NoteFlow, QuickJot, MemoBox, Scribble.", category: ideas)
+            Note(title: "Welcome to QuickNotes", content: "Your first note. Tap + to add more. Or don’t—we’re not your manager.", category: nil, isPinned: true),
+            Note(title: "Shopping List", content: "Milk, eggs, bread, and that thing I forgot the moment I left the store.", category: personal),
+            Note(title: "Meeting Notes", content: "Could have been an email. It was 47 minutes. I took one actionable bullet.", category: work),
+            Note(title: "Project Alpha ideas", content: "Dark mode (so I look serious), widgets (so I look busy), sync (so I don’t lose this).", category: ideas),
+            Note(title: "Weekly standup", content: "• Blocked on something I could Google\n• Will unblock myself after this meeting\n• No further questions", category: work),
+            Note(title: "Books to read", content: "1. That one everyone recommended\n2. The one I bought and didn’t open\n3. The one I’ll definitely start next month", category: personal),
+            Note(title: "Feature brainstorm", content: "Tags (so I can ignore them), reminders (so I can snooze them), export (so I can never find the file).", category: ideas),
+            Note(title: "Vacation packing", content: "Passport, charger, adapters. The rest is optimism and hope.", category: personal),
+            Note(title: "Sprint retrospective", content: "What went well: we survived. Improve: everything. Action items: see last retro.", category: work),
+            Note(title: "App name ideas", content: "NoteFlow (taken), QuickJot (taken), MemoBox (sounds like a cereal). Back to the drawing board.", category: ideas)
         ]
     }
 }

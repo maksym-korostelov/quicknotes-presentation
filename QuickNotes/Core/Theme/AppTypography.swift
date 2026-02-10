@@ -12,6 +12,9 @@ struct AppTypographyStyle {
 /// Centralized typography definitions using custom font family and semantic colors.
 /// All views can use these tokens with `.appTypography(_:colorOverride:)` for font + color.
 ///
+/// Every token has at least one unique parameter (size, weight, or color). Exception: category-colored
+/// text uses the user-selected category color via `colorOverride`, not a fixed typography color.
+///
 /// Mapping from system styles:
 ///   .largeTitle    → AppTypography.displayLarge
 ///   .title         → AppTypography.displayMedium
@@ -81,6 +84,47 @@ enum AppTypography {
     static let captionSmall = AppTypographyStyle(
         font: .custom(fontFamily, size: 11, relativeTo: .caption2),
         color: AppColors.textSecondary
+    )
+
+    // MARK: - Semantic by color (body size)
+
+    /// Destructive action (e.g. "Delete All Notes"). Body size, red.
+    static let bodyLargeDestructive = AppTypographyStyle(
+        font: .custom(fontFamily, size: 17, relativeTo: .body),
+        color: AppColors.textDestructive
+    )
+    /// Action / link (e.g. "Import Notes", "Export Notes", "Privacy Policy"). Body size, accent blue.
+    static let bodyLargeAction = AppTypographyStyle(
+        font: .custom(fontFamily, size: 17, relativeTo: .body),
+        color: AppColors.textAction
+    )
+    /// Value text (e.g. version, build, picker value). Subheadline size, gray.
+    static let bodyMediumValue = AppTypographyStyle(
+        font: .custom(fontFamily, size: 15, relativeTo: .subheadline),
+        color: AppColors.textValue
+    )
+    /// Hint / description (e.g. "Manage how QuickNotes sends you notifications"). Footnote size, light gray.
+    static let bodySmallHint = AppTypographyStyle(
+        font: .custom(fontFamily, size: 13, relativeTo: .footnote),
+        color: AppColors.textSecondary
+    )
+
+    // MARK: - Note status labels (unique by color)
+
+    /// Archived badge on note row.
+    static let labelArchived = AppTypographyStyle(
+        font: .custom(fontFamily, size: 11, relativeTo: .caption2),
+        color: AppColors.labelArchived
+    )
+    /// Completed badge on note row.
+    static let labelCompleted = AppTypographyStyle(
+        font: .custom(fontFamily, size: 11, relativeTo: .caption2),
+        color: AppColors.labelCompleted
+    )
+    /// Archived and completed badge (both states).
+    static let labelArchivedCompleted = AppTypographyStyle(
+        font: .custom(fontFamily, size: 11, relativeTo: .caption2),
+        color: AppColors.labelArchivedAndCompleted
     )
 }
 
