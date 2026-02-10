@@ -151,6 +151,40 @@ enum AppTypography {
     )
 }
 
+// MARK: - Font extension (for .font(.headingSmall) style usage)
+// Use these when you only need the font; use .appTypography(_:colorOverride:) when you want font + default color.
+
+extension Font {
+
+    static let displayLarge = AppTypography.displayLarge.font
+    static let displayMedium = AppTypography.displayMedium.font
+
+    static let iconHeroLarge = AppTypography.iconHeroLarge.font
+    static let iconHeroXLarge = AppTypography.iconHeroXLarge.font
+    static let iconHeroXXLarge = AppTypography.iconHeroXXLarge.font
+    static let iconHeroMedium = AppTypography.iconHeroMedium.font
+
+    static let headingLarge = AppTypography.headingLarge.font
+    static let headingMedium = AppTypography.headingMedium.font
+    static let headingSmall = AppTypography.headingSmall.font
+
+    static let bodyLarge = AppTypography.bodyLarge.font
+    static let bodyMedium = AppTypography.bodyMedium.font
+    static let bodySmall = AppTypography.bodySmall.font
+
+    static let captionLarge = AppTypography.captionLarge.font
+    static let captionSmall = AppTypography.captionSmall.font
+
+    static let bodyLargeDestructive = AppTypography.bodyLargeDestructive.font
+    static let bodyLargeAction = AppTypography.bodyLargeAction.font
+    static let bodyMediumValue = AppTypography.bodyMediumValue.font
+    static let bodySmallHint = AppTypography.bodySmallHint.font
+
+    static let labelArchived = AppTypography.labelArchived.font
+    static let labelCompleted = AppTypography.labelCompleted.font
+    static let labelArchivedCompleted = AppTypography.labelArchivedCompleted.font
+}
+
 // MARK: - View Modifier
 
 extension View {
