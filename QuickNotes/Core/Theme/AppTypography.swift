@@ -40,6 +40,29 @@ enum AppTypography {
         font: .custom(fontFamily, size: 34, relativeTo: .largeTitle),
         color: AppColors.textPrimary
     )
+
+    // MARK: - Icon hero (large decorative SF Symbols; system font for scaling)
+
+    /// Large hero icon (e.g. About header). 64pt, blue.
+    static let iconHeroLarge = AppTypographyStyle(
+        font: .system(size: 64),
+        color: AppColors.textAction
+    )
+    /// Extra-large hero icon (e.g. Onboarding). 72pt, blue.
+    static let iconHeroXLarge = AppTypographyStyle(
+        font: .system(size: 72),
+        color: AppColors.textAction
+    )
+    /// Largest hero icon (e.g. Profile). 80pt, blue.
+    static let iconHeroXXLarge = AppTypographyStyle(
+        font: .system(size: 80),
+        color: AppColors.textAction
+    )
+    /// Medium hero icon for empty states. 48pt, secondary.
+    static let iconHeroMedium = AppTypographyStyle(
+        font: .system(size: 48),
+        color: AppColors.textSecondary
+    )
     static let displayMedium = AppTypographyStyle(
         font: .custom(fontFamily, size: 28, relativeTo: .title),
         color: AppColors.textPrimary
