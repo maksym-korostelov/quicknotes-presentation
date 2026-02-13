@@ -27,6 +27,22 @@ struct AppTypographyStyle {
 ///   .caption       → AppTypography.captionLarge
 ///   .caption2      → AppTypography.captionSmall
 ///   .system(size: N) → closest AppTypography token by size
+///
+/// Specialized styles (no system equivalent):
+///   Icon Hero (for SF Symbols):
+///     - iconHeroXXLarge  (80pt, blue)
+///     - iconHeroXLarge   (72pt, blue)
+///     - iconHeroLarge    (64pt, blue)
+///     - iconHeroMedium   (48pt, secondary)
+///   Semantic color variants:
+///     - bodyLargeDestructive  (17pt, red)
+///     - bodyLargeAction       (17pt, blue)
+///     - bodyMediumValue       (15pt, gray)
+///     - bodySmallHint         (13pt, light gray)
+///   Status labels:
+///     - labelArchived            (11pt, orange)
+///     - labelCompleted           (11pt, green)
+///     - labelArchivedCompleted   (11pt, teal)
 
 enum AppTypography {
 
