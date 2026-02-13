@@ -45,8 +45,7 @@ struct NoteEditorView: View {
                             }
                         }
                     }
-                    .font(.body)
-                    .fontWeight(.semibold)
+                    .appTypography(AppTypography.bodyLarge)
                     .disabled(!viewModel.isValid || viewModel.isLoading)
                 }
             }
@@ -56,7 +55,7 @@ struct NoteEditorView: View {
             .overlay {
                 if viewModel.isLoading {
                     ProgressView("Saving...")
-                        .font(.subheadline)
+                        .appTypography(AppTypography.bodyMedium)
                 }
             }
             .alert("Error", isPresented: Binding(
@@ -77,10 +76,10 @@ struct NoteEditorView: View {
     private var titleSection: some View {
         Section {
             TextField("Note title", text: $viewModel.title)
-                .font(.system(size: 18, weight: .medium))
+                .appTypography(AppTypography.headingSmall)
         } header: {
             Text("Title")
-                .font(.headline)
+                .appTypography(AppTypography.headingSmall)
         }
     }
 
@@ -89,15 +88,14 @@ struct NoteEditorView: View {
     private var contentSection: some View {
         Section {
             TextEditor(text: $viewModel.content)
-                .font(.body)
+                .appTypography(AppTypography.bodyLarge)
                 .frame(minHeight: 200)
         } header: {
             Text("Content")
-                .font(.headline)
+                .appTypography(AppTypography.headingSmall)
         } footer: {
             Text("\(viewModel.content.count) characters")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
+                .appTypography(AppTypography.captionSmall, colorOverride: AppColors.textSecondary)
         }
     }
 
@@ -130,25 +128,23 @@ struct NoteEditorView: View {
                         Image(systemName: category.icon)
                             .foregroundStyle(Color(hex: category.colorHex))
                         Text(category.name)
-                            .foregroundStyle(.primary)
+                            .foregroundStyle(AppColors.textPrimary)
                     } else {
                         Text("None")
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(AppColors.textSecondary)
                     }
                     Spacer()
                     Image(systemName: "chevron.up.chevron.down")
-                        .font(.caption)
-                        .foregroundStyle(.tertiary)
+                        .appTypography(AppTypography.captionLarge, colorOverride: AppColors.textTertiary)
                 }
-                .font(.body)
+                .appTypography(AppTypography.bodyLarge)
             }
         } header: {
             Text("Category")
-                .font(.headline)
+                .appTypography(AppTypography.headingSmall)
         } footer: {
             Text("Organize your note by assigning a category")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+                .appTypography(AppTypography.captionLarge, colorOverride: AppColors.textSecondary)
         }
     }
 
@@ -157,14 +153,13 @@ struct NoteEditorView: View {
     private var pinSection: some View {
         Section {
             Toggle("Pin to top", isOn: $viewModel.isPinned)
-                .font(.body)
+                .appTypography(AppTypography.bodyLarge)
         } header: {
             Text("Pin")
-                .font(.headline)
+                .appTypography(AppTypography.headingSmall)
         } footer: {
             Text("Pinned notes appear at the top of the list")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+                .appTypography(AppTypography.captionLarge, colorOverride: AppColors.textSecondary)
         }
     }
 }

@@ -67,8 +67,7 @@ struct NoteDetailView: View {
                     )
                 ) {
                     Text("Edit")
-                        .font(.body)
-                        .fontWeight(.medium)
+                        .appTypography(AppTypography.bodyLarge)
                 }
             }
         }
@@ -105,13 +104,11 @@ struct NoteDetailView: View {
     private var headerSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(viewModel.note.title)
-                .font(.largeTitle)
-                .fontWeight(.bold)
+                .appTypography(AppTypography.displayLarge)
 
             if let category = viewModel.note.category {
                 Label(category.name, systemImage: category.icon)
-                    .font(.subheadline)
-                    .foregroundStyle(Color(hex: category.colorHex))
+                    .appTypography(AppTypography.bodyMedium, colorOverride: Color(hex: category.colorHex))
                     .padding(.horizontal, 10)
                     .padding(.vertical, 4)
                     .background(Color(hex: category.colorHex).opacity(0.15))
@@ -125,11 +122,10 @@ struct NoteDetailView: View {
     private var contentSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Content")
-                .font(.title3)
-                .fontWeight(.semibold)
+                .appTypography(AppTypography.headingMedium)
 
             Text(viewModel.note.content)
-                .font(.body)
+                .appTypography(AppTypography.bodyLarge)
                 .lineSpacing(4)
         }
     }
@@ -139,25 +135,22 @@ struct NoteDetailView: View {
     private var metadataSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Details")
-                .font(.title3)
-                .fontWeight(.semibold)
+                .appTypography(AppTypography.headingMedium)
 
             HStack {
                 Label("Created", systemImage: "calendar")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
+                    .appTypography(AppTypography.bodySmall, colorOverride: AppColors.textSecondary)
                 Spacer()
                 Text(viewModel.note.createdAt.formatted(date: .long, time: .shortened))
-                    .font(.footnote)
+                    .appTypography(AppTypography.bodySmall)
             }
 
             HStack {
                 Label("Modified", systemImage: "clock")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
+                    .appTypography(AppTypography.bodySmall, colorOverride: AppColors.textSecondary)
                 Spacer()
                 Text(viewModel.note.modifiedAt.formatted(date: .long, time: .shortened))
-                    .font(.footnote)
+                    .appTypography(AppTypography.bodySmall)
             }
         }
         .padding()

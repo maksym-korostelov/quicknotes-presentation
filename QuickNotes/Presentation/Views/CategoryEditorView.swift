@@ -43,7 +43,7 @@ struct CategoryEditorView: View {
             .overlay {
                 if viewModel.isLoading {
                     ProgressView("Saving...")
-                        .font(.subheadline)
+                        .appTypography(AppTypography.bodyMedium)
                 }
             }
             .alert("Error", isPresented: Binding(
@@ -62,7 +62,7 @@ struct CategoryEditorView: View {
     private var nameSection: some View {
         Section {
             TextField("Category name", text: $viewModel.name)
-                .font(.body)
+                .appTypography(AppTypography.bodyLarge)
         } header: {
             Text("Name")
         }
@@ -76,8 +76,7 @@ struct CategoryEditorView: View {
                         viewModel.selectedIcon = item.sfSymbol
                     } label: {
                         Image(systemName: item.sfSymbol)
-                            .font(.title2)
-                            .foregroundStyle(viewModel.selectedIcon == item.sfSymbol ? .white : Color(hex: viewModel.selectedColorHex))
+                            .appTypography(AppTypography.headingLarge, colorOverride: viewModel.selectedIcon == item.sfSymbol ? .white : Color(hex: viewModel.selectedColorHex))
                             .frame(width: 44, height: 44)
                             .background(
                                 viewModel.selectedIcon == item.sfSymbol

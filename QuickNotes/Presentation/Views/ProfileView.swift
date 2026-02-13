@@ -34,21 +34,17 @@ struct ProfileView: View {
     private var avatarSection: some View {
         VStack(spacing: 12) {
             Image(systemName: "person.circle.fill")
-                .font(.system(size: 80))
-                .foregroundStyle(.blue)
+                .appTypography(AppTypography.iconHeroXXLarge)
 
             Text(viewModel.profile?.displayName ?? "User")
-                .font(.title)
-                .fontWeight(.bold)
+                .appTypography(AppTypography.displayMedium)
 
             Text(viewModel.profile?.email ?? "")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .appTypography(AppTypography.bodyMedium, colorOverride: AppColors.textSecondary)
 
             if let joinedDate = viewModel.profile?.joinedDate {
                 Text("Member since \(joinedDate.formatted(date: .long, time: .omitted))")
-                    .font(.caption)
-                    .foregroundStyle(.tertiary)
+                    .appTypography(AppTypography.captionLarge, colorOverride: AppColors.textTertiary)
             }
         }
     }
@@ -58,8 +54,7 @@ struct ProfileView: View {
     private var statsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Activity")
-                .font(.title2)
-                .fontWeight(.semibold)
+                .appTypography(AppTypography.headingLarge)
 
             HStack(spacing: 16) {
                 if let profile = viewModel.profile {
@@ -75,16 +70,13 @@ struct ProfileView: View {
     private func statCard(title: String, value: String, icon: String) -> some View {
         VStack(spacing: 8) {
             Image(systemName: icon)
-                .font(.headline)
-                .foregroundStyle(.blue)
+                .appTypography(AppTypography.headingSmall, colorOverride: AppColors.textAction)
 
             Text(value)
-                .font(.title2)
-                .fontWeight(.bold)
+                .appTypography(AppTypography.headingLarge)
 
             Text(title)
-                .font(.caption)
-                .foregroundStyle(.secondary)
+                .appTypography(AppTypography.captionLarge, colorOverride: AppColors.textSecondary)
         }
         .frame(maxWidth: .infinity)
         .padding()
@@ -97,17 +89,15 @@ struct ProfileView: View {
     private var actionsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Account")
-                .font(.title2)
-                .fontWeight(.semibold)
+                .appTypography(AppTypography.headingLarge)
 
             Button(action: {}) {
                 HStack {
                     Label("Edit Profile", systemImage: "pencil")
-                        .font(.body)
+                        .appTypography(AppTypography.bodyLarge)
                     Spacer()
                     Image(systemName: "chevron.right")
-                        .font(.caption)
-                        .foregroundStyle(.tertiary)
+                        .appTypography(AppTypography.captionLarge, colorOverride: AppColors.textTertiary)
                 }
                 .padding()
                 .background(Color(.systemGray6))
@@ -118,8 +108,7 @@ struct ProfileView: View {
             Button(action: {}) {
                 HStack {
                     Label("Sign Out", systemImage: "rectangle.portrait.and.arrow.right")
-                        .font(.body)
-                        .foregroundStyle(.red)
+                        .appTypography(AppTypography.bodyLarge, colorOverride: AppColors.textDestructive)
                     Spacer()
                 }
                 .padding()

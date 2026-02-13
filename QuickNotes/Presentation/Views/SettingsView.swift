@@ -27,14 +27,13 @@ struct SettingsView: View {
     private var appearanceSection: some View {
         Section {
             Toggle("Dark Mode", isOn: $viewModel.isDarkModeEnabled)
-                .font(.body)
+                .appTypography(AppTypography.bodyLarge)
         } header: {
             Text("Appearance")
-                .font(.caption)
+                .appTypography(AppTypography.captionLarge)
         } footer: {
             Text("Customize how QuickNotes looks")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
+                .appTypography(AppTypography.captionSmall, colorOverride: AppColors.textSecondary)
         }
     }
 
@@ -43,14 +42,13 @@ struct SettingsView: View {
     private var notificationsSection: some View {
         Section {
             Toggle("Enable Notifications", isOn: $viewModel.isNotificationsEnabled)
-                .font(.body)
+                .appTypography(AppTypography.bodyLarge)
         } header: {
             Text("Notifications")
-                .font(.caption)
+                .appTypography(AppTypography.captionLarge)
         } footer: {
             Text("Manage how QuickNotes sends you notifications")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
+                .appTypography(AppTypography.bodySmallHint)
         }
     }
 
@@ -65,14 +63,13 @@ struct SettingsView: View {
                     Text(order.rawValue).tag(order.rawValue)
                 }
             }
-            .font(.body)
+            .appTypography(AppTypography.bodyLarge)
         } header: {
             Text("Sort Order")
-                .font(.caption)
+                .appTypography(AppTypography.captionLarge)
         } footer: {
             Text("Applies to the order of notes in the Notes tab")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
+                .appTypography(AppTypography.captionSmall, colorOverride: AppColors.textSecondary)
         }
     }
 
@@ -83,35 +80,35 @@ struct SettingsView: View {
             Button(action: {}) {
                 HStack {
                     Text("Export Notes")
-                        .font(.body)
+                        .appTypography(AppTypography.bodyLargeAction)
                     Spacer()
                     Image(systemName: "square.and.arrow.up")
-                        .font(.body)
+                        .appTypography(AppTypography.bodyLarge)
                 }
             }
 
             Button(action: {}) {
                 HStack {
                     Text("Import Notes")
-                        .font(.body)
+                        .appTypography(AppTypography.bodyLargeAction)
                     Spacer()
                     Image(systemName: "square.and.arrow.down")
-                        .font(.body)
+                        .appTypography(AppTypography.bodyLarge)
                 }
             }
 
             Button(role: .destructive, action: {}) {
                 HStack {
                     Text("Delete All Notes")
-                        .font(.body)
+                        .appTypography(AppTypography.bodyLargeDestructive)
                     Spacer()
                     Image(systemName: "trash")
-                        .font(.body)
+                        .appTypography(AppTypography.bodyLarge)
                 }
             }
         } header: {
             Text("Data")
-                .font(.caption)
+                .appTypography(AppTypography.captionLarge)
         }
     }
 
@@ -123,49 +120,47 @@ struct SettingsView: View {
                 AboutView()
             } label: {
                 Text("About QuickNotes")
-                    .font(.body)
+                    .appTypography(AppTypography.bodyLarge)
             }
 
             NavigationLink {
                 HelpView()
             } label: {
                 Text("Help")
-                    .font(.body)
+                    .appTypography(AppTypography.bodyLarge)
             }
 
             HStack {
                 Text("Version")
-                    .font(.body)
+                    .appTypography(AppTypography.bodyLarge)
                 Spacer()
                 Text("1.0.0")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .appTypography(AppTypography.bodyMediumValue)
             }
 
             HStack {
                 Text("Build")
-                    .font(.body)
+                    .appTypography(AppTypography.bodyLarge)
                 Spacer()
                 Text("2025.1")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .appTypography(AppTypography.bodyMediumValue)
             }
 
             Link(destination: URL(string: "https://example.com/privacy")!) {
                 Text("Privacy Policy")
-                    .font(.body)
+                    .appTypography(AppTypography.bodyLargeAction)
             }
 
             Link(destination: URL(string: "https://example.com/terms")!) {
                 Text("Terms of Service")
-                    .font(.body)
+                    .appTypography(AppTypography.bodyLargeAction)
             }
         } header: {
             Text("About")
-                .font(.caption)
+                .appTypography(AppTypography.captionLarge)
         } footer: {
             Text("Made with ❤️ using SwiftUI")
-                .font(.footnote)
+                .appTypography(AppTypography.bodySmall)
                 .frame(maxWidth: .infinity)
                 .multilineTextAlignment(.center)
                 .padding(.top, 8)

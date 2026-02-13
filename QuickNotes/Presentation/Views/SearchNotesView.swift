@@ -43,7 +43,7 @@ struct SearchNotesView: View {
             Group {
                 if isLoading {
                     ProgressView("Loading...")
-                        .font(.subheadline)
+                        .appTypography(AppTypography.bodyMedium)
                 } else if filteredNotes.isEmpty {
                     emptyStateView
                 } else {
@@ -84,6 +84,7 @@ struct SearchNotesView: View {
             )
         } description: {
             Text(emptyStateDescription(query: query, hasSearchQuery: hasSearchQuery, hasNoNotesAtAll: hasNoNotesAtAll))
+                .appTypography(AppTypography.bodyMedium, colorOverride: AppColors.textSecondary)
         }
     }
 
@@ -120,26 +121,23 @@ struct SearchNotesView: View {
     private func noteRow(_ note: Note) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(note.title)
-                .font(.headline)
+                .appTypography(AppTypography.headingSmall)
                 .lineLimit(1)
 
             Text(note.content)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .appTypography(AppTypography.bodyMedium, colorOverride: AppColors.textSecondary)
                 .lineLimit(2)
 
             HStack {
                 if let category = note.category {
                     Label(category.name, systemImage: category.icon)
-                        .font(.caption)
-                        .foregroundStyle(Color(hex: category.colorHex))
+                        .appTypography(AppTypography.captionLarge, colorOverride: Color(hex: category.colorHex))
                 }
 
                 Spacer()
 
                 Text(note.modifiedAt.formatted(date: .abbreviated, time: .shortened))
-                    .font(.caption2)
-                    .foregroundStyle(.tertiary)
+                    .appTypography(AppTypography.captionSmall, colorOverride: AppColors.textTertiary)
             }
         }
         .padding(.vertical, 4)

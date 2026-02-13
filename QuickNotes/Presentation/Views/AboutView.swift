@@ -25,16 +25,14 @@ struct AboutView: View {
     private var appHeaderSection: some View {
         VStack(spacing: 12) {
             Image(systemName: "note.text")
-                .font(.system(size: 64))
-                .foregroundStyle(.blue)
+                .appTypography(AppTypography.iconHeroLarge)
 
             Text("QuickNotes")
-                .font(.largeTitle)
+                .appTypography(AppTypography.displayLarge)
                 .fontWeight(.bold)
 
             Text("Capture ideas. Stay organized.")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .appTypography(AppTypography.bodyMedium, colorOverride: AppColors.textSecondary)
                 .multilineTextAlignment(.center)
         }
         .padding(.vertical, 24)
@@ -45,24 +43,22 @@ struct AboutView: View {
     private var versionSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Version")
-                .font(.headline)
+                .appTypography(AppTypography.headingSmall)
 
             HStack {
                 Text("Version")
-                    .font(.body)
+                    .appTypography(AppTypography.bodyLarge)
                 Spacer()
                 Text("1.0.0")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .appTypography(AppTypography.bodyMediumValue)
             }
 
             HStack {
                 Text("Build")
-                    .font(.body)
+                    .appTypography(AppTypography.bodyLarge)
                 Spacer()
                 Text("2025.1")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .appTypography(AppTypography.bodyMediumValue)
             }
         }
         .padding()
@@ -76,12 +72,10 @@ struct AboutView: View {
     private var creditsSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Credits")
-                .font(.title3)
-                .fontWeight(.semibold)
+                .appTypography(AppTypography.headingMedium)
 
             Text("QuickNotes is built with SwiftUI and follows iOS design guidelines. Icons and visuals are designed to keep your notes simple and accessible.")
-                .font(.body)
-                .foregroundStyle(.secondary)
+                .appTypography(AppTypography.bodyLarge, colorOverride: AppColors.textSecondary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -91,28 +85,25 @@ struct AboutView: View {
     private var linksSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Legal")
-                .font(.title3)
-                .fontWeight(.semibold)
+                .appTypography(AppTypography.headingMedium)
 
             Link(destination: URL(string: "https://example.com/privacy")!) {
                 HStack {
                     Text("Privacy Policy")
-                        .font(.body)
+                        .appTypography(AppTypography.bodyLargeAction)
                     Spacer()
                     Image(systemName: "arrow.up.right")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .appTypography(AppTypography.captionLarge, colorOverride: AppColors.textSecondary)
                 }
             }
 
             Link(destination: URL(string: "https://example.com/terms")!) {
                 HStack {
                     Text("Terms of Service")
-                        .font(.body)
+                        .appTypography(AppTypography.bodyLargeAction)
                     Spacer()
                     Image(systemName: "arrow.up.right")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .appTypography(AppTypography.captionLarge, colorOverride: AppColors.textSecondary)
                 }
             }
         }
@@ -123,8 +114,7 @@ struct AboutView: View {
 
     private var footerSection: some View {
         Text("Made with ❤️ using SwiftUI")
-            .font(.footnote)
-            .foregroundStyle(.tertiary)
+            .appTypography(AppTypography.bodySmall, colorOverride: AppColors.textTertiary)
             .padding(.top, 16)
     }
 }

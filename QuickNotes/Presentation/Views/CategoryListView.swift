@@ -29,7 +29,7 @@ struct CategoryListView: View {
             Group {
                 if viewModel.isLoading && viewModel.categories.isEmpty {
                     ProgressView("Loading categories...")
-                        .font(.subheadline)
+                        .appTypography(AppTypography.bodyMedium)
                 } else if viewModel.categories.isEmpty {
                     emptyStateView
                 } else {
@@ -46,7 +46,7 @@ struct CategoryListView: View {
                         showingAddCategory = true
                     } label: {
                         Image(systemName: "plus.circle.fill")
-                            .font(.title2)
+                            .appTypography(AppTypography.headingLarge)
                     }
                 }
             }
@@ -104,16 +104,13 @@ struct CategoryListView: View {
     private var emptyStateView: some View {
         VStack(spacing: 16) {
             Image(systemName: "folder")
-                .font(.system(size: 48))
-                .foregroundStyle(.secondary)
+                .appTypography(AppTypography.iconHeroMedium)
 
             Text("No Categories")
-                .font(.title2)
-                .fontWeight(.semibold)
+                .appTypography(AppTypography.headingLarge)
 
             Text("Tap + to create a category and organize your notes")
-                .font(.body)
-                .foregroundStyle(.secondary)
+                .appTypography(AppTypography.bodyLarge, colorOverride: AppColors.textSecondary)
                 .multilineTextAlignment(.center)
         }
         .padding()
@@ -160,26 +157,23 @@ struct CategoryListView: View {
     private func categoryRow(_ category: Category) -> some View {
         HStack(spacing: 12) {
             Image(systemName: category.icon)
-                .font(.title3)
-                .foregroundStyle(.white)
+                .appTypography(AppTypography.headingMedium, colorOverride: .white)
                 .frame(width: 36, height: 36)
                 .background(Color(hex: category.colorHex))
                 .clipShape(RoundedRectangle(cornerRadius: 8))
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(category.name)
-                    .font(.headline)
+                    .appTypography(AppTypography.headingSmall)
 
                 Text("Tap to view notes")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .appTypography(AppTypography.captionLarge, colorOverride: AppColors.textSecondary)
             }
 
             Spacer()
 
             Image(systemName: "chevron.right")
-                .font(.caption)
-                .foregroundStyle(.tertiary)
+                .appTypography(AppTypography.captionLarge, colorOverride: AppColors.textTertiary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, 4)

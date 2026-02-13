@@ -53,16 +53,15 @@ struct AddNoteView: View {
     private var titleSection: some View {
         Section {
             TextField("Note title", text: $title)
-                .font(.system(size: 18, weight: .medium))
+                .appTypography(AppTypography.headingSmall)
         } header: {
             Text("Title")
-                .font(.caption)
+                .appTypography(AppTypography.captionLarge)
                 .textCase(.uppercase)
         } footer: {
             if isSaveDisabled {
                 Text("Title is required")
-                    .font(.caption2)
-                    .foregroundStyle(.red)
+                    .appTypography(AppTypography.captionSmall, colorOverride: AppColors.textDestructive)
             }
         }
     }
@@ -70,16 +69,15 @@ struct AddNoteView: View {
     private var contentSection: some View {
         Section {
             TextEditor(text: $content)
-                .font(.body)
+                .appTypography(AppTypography.bodyLarge)
                 .frame(minHeight: 200)
         } header: {
             Text("Content")
-                .font(.caption)
+                .appTypography(AppTypography.captionLarge)
                 .textCase(.uppercase)
         } footer: {
             Text("\(content.count) characters")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
+                .appTypography(AppTypography.captionSmall, colorOverride: AppColors.textSecondary)
         }
     }
 

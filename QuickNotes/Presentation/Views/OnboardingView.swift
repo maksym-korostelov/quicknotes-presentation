@@ -57,8 +57,7 @@ struct OnboardingView: View {
         Button("Skip") {
             onComplete()
         }
-        .font(.body)
-        .foregroundStyle(.secondary)
+        .appTypography(AppTypography.bodyLarge, colorOverride: AppColors.textSecondary)
     }
 
     // MARK: - Page Content
@@ -68,17 +67,14 @@ struct OnboardingView: View {
             Spacer()
 
             Image(systemName: page.icon)
-                .font(.system(size: 72))
-                .foregroundStyle(.blue)
+                .appTypography(AppTypography.iconHeroXLarge)
 
             Text(page.title)
-                .font(.title)
-                .fontWeight(.bold)
+                .appTypography(AppTypography.displayMedium)
                 .multilineTextAlignment(.center)
 
             Text(page.subtitle)
-                .font(.body)
-                .foregroundStyle(.secondary)
+                .appTypography(AppTypography.bodyLarge, colorOverride: AppColors.textSecondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
 
@@ -92,7 +88,7 @@ struct OnboardingView: View {
         HStack(spacing: 8) {
             ForEach(0..<pages.count, id: \.self) { index in
                 Circle()
-                    .fill(index == currentPage ? Color.blue : Color.gray.opacity(0.3))
+                    .fill(index == currentPage ? AppColors.textAction : Color.gray.opacity(0.3))
                     .frame(width: 8, height: 8)
             }
         }
@@ -112,7 +108,7 @@ struct OnboardingView: View {
             }
         } label: {
             Text(currentPage < pages.count - 1 ? "Next" : "Get Started")
-                .font(.headline)
+                .appTypography(AppTypography.headingSmall)
                 .frame(maxWidth: .infinity)
                 .padding()
         }

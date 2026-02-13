@@ -27,7 +27,7 @@ struct NoteListView: View {
             Group {
                 if viewModel.isLoading {
                     ProgressView("Loading notes...")
-                        .font(.subheadline)
+                        .appTypography(AppTypography.bodyMedium)
                 } else {
                     noteListContent
                 }
@@ -40,7 +40,7 @@ struct NoteListView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: { showingAddNote = true }) {
                         Image(systemName: "plus.circle.fill")
-                            .font(.title2)
+                            .appTypography(AppTypography.headingLarge)
                     }
                 }
             }
@@ -121,11 +121,9 @@ struct NoteListView: View {
         Section {
             VStack(spacing: 8) {
                 Text(emptyStateTitle)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .appTypography(AppTypography.bodyMedium, colorOverride: AppColors.textSecondary)
                 Text(emptyStateSubtitle)
-                    .font(.caption)
-                    .foregroundStyle(.tertiary)
+                    .appTypography(AppTypography.captionLarge, colorOverride: AppColors.textTertiary)
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 8)
@@ -208,38 +206,37 @@ struct NoteListView: View {
             }
 
             VStack(alignment: .leading, spacing: 6) {
-                HStack(spacing: 6) {
+                HStack(alignment: .center, spacing: 6) {
                     if note.isPinned {
                         Image(systemName: "pin.fill")
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
+                            .appTypography(AppTypography.captionSmall, colorOverride: AppColors.textSecondary)
                     }
                     Text(note.title)
-                        .font(.headline)
+                        .appTypography(AppTypography.headingSmall)
                         .lineLimit(1)
-                        .strikethrough(note.isCompleted, color: .secondary)
+                        .truncationMode(.tail)
+                        .strikethrough(note.isCompleted, color: AppColors.textSecondary)
+                        .layoutPriority(0)
                     Spacer(minLength: 4)
                     noteStatusBadges(note)
+                        .layoutPriority(1)
                 }
 
                 Text(note.content)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .appTypography(AppTypography.bodyMedium, colorOverride: AppColors.textSecondary)
                     .lineLimit(2)
-                    .strikethrough(note.isCompleted, color: .secondary)
+                    .strikethrough(note.isCompleted, color: AppColors.textSecondary)
 
                 HStack {
                     if let category = note.category {
                         Label(category.name, systemImage: category.icon)
-                            .font(.caption)
-                            .foregroundStyle(Color(hex: category.colorHex))
+                            .appTypography(AppTypography.captionLarge, colorOverride: Color(hex: category.colorHex))
                     }
 
                     Spacer()
 
                     Text(note.modifiedAt.formatted(date: .abbreviated, time: .shortened))
-                        .font(.caption2)
-                        .foregroundStyle(.tertiary)
+                        .appTypography(AppTypography.captionSmall, colorOverride: AppColors.textTertiary)
                 }
             }
         }
@@ -252,8 +249,8 @@ struct NoteListView: View {
         HStack(spacing: 6) {
             if note.isArchived {
                 Label("Archived", systemImage: "archivebox.fill")
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
+                    .appTypography(AppTypography.labelArchived)
+                    .lineLimit(1)
                     .padding(.horizontal, 6)
                     .padding(.vertical, 3)
                     .background(.quaternary)
@@ -261,20 +258,21 @@ struct NoteListView: View {
             }
             if note.isCompleted {
                 Label("Completed", systemImage: "checkmark.circle.fill")
-                    .font(.caption2)
-                    .foregroundStyle(.green)
+                    .appTypography(AppTypography.labelCompleted)
+                    .lineLimit(1)
                     .padding(.horizontal, 6)
                     .padding(.vertical, 3)
-                    .background(.green.opacity(0.15))
+                    .background(AppColors.labelCompleted.opacity(0.15))
                     .clipShape(Capsule())
             }
         }
+        .fixedSize(horizontal: true, vertical: false)
     }
 
     private func noteStatusAccentColor(_ note: Note) -> Color {
-        if note.isCompleted && note.isArchived { return .orange }
-        if note.isCompleted { return .green }
-        if note.isArchived { return .gray }
+        if note.isCompleted && note.isArchived { return AppColors.labelArchivedAndCompleted }
+        if note.isCompleted { return AppColors.labelCompleted }
+        if note.isArchived { return AppColors.labelArchived }
         return .clear
     }
 }
