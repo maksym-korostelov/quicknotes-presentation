@@ -16,19 +16,19 @@ final class DeleteNoteUseCase: DeleteNoteUseCaseProtocol {
     
     // MARK: - Properties
     
-    private let repository: NoteRepository
+    private let repository: NoteRepositoryProtocol
     
     // MARK: - Initialization
     
     /// Initializes the use case with a note repository.
     /// - Parameter repository: The repository to delete notes from
-    init(repository: NoteRepository) {
+    init(repository: NoteRepositoryProtocol) {
         self.repository = repository
     }
     
     // MARK: - Public Methods
     
     func execute(id: UUID) async throws {
-        try await repository.deleteNote(by: id)
+        try await repository.deleteNote(id: id)
     }
 }

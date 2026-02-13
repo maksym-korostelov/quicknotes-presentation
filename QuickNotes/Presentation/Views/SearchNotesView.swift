@@ -1,0 +1,160 @@
+import SwiftUI
+
+// MARK: - SearchNotesView
+
+/// Search-focused notes view for the Search tab. Used with Tab(role: .search) so the search field appears in the tab bar at the bottom (default iOS behavior).
+struct SearchNotesView: View {
+    // MARK: - Properties
+
+    private let dependencies: AppDependencies
+    @Binding var searchQuery: String
+    @State private var notes: [Note] = []
+    @State private var isLoading = false
+    @State private var errorMessage: String?
+
+    private var filteredNotes: [Note] {
+        let query = searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        let result: [Note]
+        if query.isEmpty {
+            result = notes
+        } else {
+            result = notes.filter {
+                $0.title.localizedCaseInsensitiveContains(query) ||
+                $0.content.localizedCaseInsensitiveContains(query)
+            }
+        }
+        return result.sorted { n1, n2 in
+            if n1.isPinned != n2.isPinned { return n1.isPinned }
+            return n1.modifiedAt > n2.modifiedAt
+        }
+    }
+
+    // MARK: - Initialization
+
+    init(dependencies: AppDependencies, searchQuery: Binding<String>) {
+        self.dependencies = dependencies
+        _searchQuery = searchQuery
+    }
+
+    // MARK: - Body
+
+    var body: some View {
+        NavigationStack {
+            Group {
+                if isLoading {
+                    ProgressView("Loading...")
+                        .appTypography(AppTypography.bodyMedium)
+                } else if filteredNotes.isEmpty {
+                    emptyStateView
+                } else {
+                    searchResultsList
+                }
+            }
+            .navigationTitle("Search")
+            .refreshable {
+                await loadNotes()
+            }
+            .task {
+                await loadNotes()
+            }
+            .alert("Error", isPresented: Binding(
+                get: { errorMessage != nil },
+                set: { if !$0 { errorMessage = nil } }
+            )) {
+                Button("OK") { errorMessage = nil }
+            } message: {
+                if let message = errorMessage {
+                    Text(message)
+                }
+            }
+        }
+    }
+
+    // MARK: - Empty State
+
+    private var emptyStateView: some View {
+        let query = searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        let hasSearchQuery = !query.isEmpty
+        let hasNoNotesAtAll = notes.isEmpty
+
+        return ContentUnavailableView {
+            Label(
+                hasNoNotesAtAll && !hasSearchQuery ? "No Notes Yet" : "No Notes",
+                systemImage: hasNoNotesAtAll && !hasSearchQuery ? "note.text" : "magnifyingglass"
+            )
+        } description: {
+            Text(emptyStateDescription(query: query, hasSearchQuery: hasSearchQuery, hasNoNotesAtAll: hasNoNotesAtAll))
+                .appTypography(AppTypography.bodyMedium, colorOverride: AppColors.textSecondary)
+        }
+    }
+
+    private func emptyStateDescription(query: String, hasSearchQuery: Bool, hasNoNotesAtAll: Bool) -> String {
+        if hasNoNotesAtAll && !hasSearchQuery {
+            return "Create your first note from the Notes tab."
+        }
+        if hasSearchQuery {
+            return "No notes match \"\(query)\"."
+        }
+        return "Enter a search term to find notes."
+    }
+
+    // MARK: - Results List
+
+    private var searchResultsList: some View {
+        List {
+            ForEach(filteredNotes) { note in
+                NavigationLink(
+                    destination: NoteDetailView(
+                        viewModel: dependencies.makeNoteDetailViewModel(note: note),
+                        dependencies: dependencies
+                    )
+                ) {
+                    noteRow(note)
+                }
+            }
+        }
+        .listStyle(.insetGrouped)
+    }
+
+    // MARK: - Note Row
+
+    private func noteRow(_ note: Note) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(note.title)
+                .appTypography(AppTypography.headingSmall)
+                .lineLimit(1)
+
+            Text(note.content)
+                .appTypography(AppTypography.bodyMedium, colorOverride: AppColors.textSecondary)
+                .lineLimit(2)
+
+            HStack {
+                if let category = note.category {
+                    Label(category.name, systemImage: category.icon)
+                        .appTypography(AppTypography.captionLarge, colorOverride: Color(hex: category.colorHex))
+                }
+
+                Spacer()
+
+                Text(note.modifiedAt.formatted(date: .abbreviated, time: .shortened))
+                    .appTypography(AppTypography.captionSmall, colorOverride: AppColors.textTertiary)
+            }
+        }
+        .padding(.vertical, 4)
+    }
+
+    // MARK: - Actions
+
+    @MainActor
+    private func loadNotes() async {
+        isLoading = true
+        errorMessage = nil
+        do {
+            notes = try await dependencies.getNotesUseCase.execute()
+            notes.sort { $0.modifiedAt > $1.modifiedAt }
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+        isLoading = false
+    }
+}
