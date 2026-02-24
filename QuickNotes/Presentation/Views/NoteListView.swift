@@ -233,6 +233,18 @@ struct NoteListView: View {
                             .appTypography(AppTypography.captionLarge, colorOverride: Color(hex: category.colorHex))
                     }
 
+                    if !note.tags.isEmpty {
+                        ForEach(note.tags.prefix(3)) { tag in
+                            Text(tag.name)
+                                .appTypography(AppTypography.captionSmall)
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(Color(hex: tag.colorHex).opacity(0.15))
+                                .foregroundStyle(Color(hex: tag.colorHex))
+                                .clipShape(Capsule())
+                        }
+                    }
+
                     Spacer()
 
                     Text(note.modifiedAt.formatted(date: .abbreviated, time: .shortened))

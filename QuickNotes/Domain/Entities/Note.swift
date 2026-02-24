@@ -25,7 +25,10 @@ struct Note: Identifiable, Codable, Equatable {
 
     /// When true, the note is marked completed and hidden from the default list.
     let isCompleted: Bool
-    
+
+    /// Tags associated with the note
+    let tags: [Tag]
+
     /// Date when the note was created
     let createdAt: Date
     
@@ -38,7 +41,7 @@ struct Note: Identifiable, Codable, Equatable {
 extension Note {
     
     /// Creates a new note with auto-generated ID and current timestamps.
-    init(title: String, content: String, category: Category? = nil, isPinned: Bool = false, isArchived: Bool = false, isCompleted: Bool = false) {
+    init(title: String, content: String, category: Category? = nil, isPinned: Bool = false, isArchived: Bool = false, isCompleted: Bool = false, tags: [Tag] = []) {
         self.id = UUID()
         self.title = title
         self.content = content
@@ -46,6 +49,7 @@ extension Note {
         self.isPinned = isPinned
         self.isArchived = isArchived
         self.isCompleted = isCompleted
+        self.tags = tags
         self.createdAt = Date()
         self.modifiedAt = Date()
     }

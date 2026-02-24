@@ -10,6 +10,7 @@ final class AppDependencies {
 
     private let noteRepository: NoteRepositoryProtocol
     private let categoryRepository: CategoryRepositoryProtocol
+    private let tagRepository: TagRepositoryProtocol
 
     // MARK: - Use Cases
 
@@ -21,6 +22,8 @@ final class AppDependencies {
     let addCategoryUseCase: AddCategoryUseCaseProtocol
     let updateCategoryUseCase: UpdateCategoryUseCaseProtocol
     let deleteCategoryUseCase: DeleteCategoryUseCaseProtocol
+    let getTagsUseCase: GetTagsUseCaseProtocol
+    let addTagUseCase: AddTagUseCaseProtocol
 
     // MARK: - Initialization
 
@@ -53,6 +56,9 @@ final class AppDependencies {
             getNotesUseCase: self.getNotesUseCase,
             saveNoteUseCase: self.saveNoteUseCase
         )
+        self.tagRepository = InMemoryTagRepository()
+        self.getTagsUseCase = GetTagsUseCase(repository: self.tagRepository)
+        self.addTagUseCase = AddTagUseCase(repository: self.tagRepository)
     }
 
     private static func createDefaultContainer() -> ModelContainer? {
@@ -92,7 +98,9 @@ final class AppDependencies {
         NoteEditorViewModel(
             note: note,
             saveNoteUseCase: saveNoteUseCase,
-            getCategoriesUseCase: getCategoriesUseCase
+            getCategoriesUseCase: getCategoriesUseCase,
+            getTagsUseCase: getTagsUseCase,
+            addTagUseCase: addTagUseCase
         )
     }
 

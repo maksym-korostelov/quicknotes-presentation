@@ -45,6 +45,7 @@ final class SwiftDataNoteRepository: NoteRepositoryProtocol {
             first.isPinned = note.isPinned
             first.isArchived = note.isArchived
             first.isCompleted = note.isCompleted
+            first.tagsJSON = (try? JSONEncoder().encode(note.tags)).flatMap { String(data: $0, encoding: .utf8) }
             first.modifiedAt = note.modifiedAt
         } else {
             let model = NoteModel.from(note)

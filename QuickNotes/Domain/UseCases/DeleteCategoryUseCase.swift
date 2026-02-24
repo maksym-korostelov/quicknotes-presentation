@@ -36,6 +36,7 @@ final class DeleteCategoryUseCase: DeleteCategoryUseCaseProtocol {
                 isPinned: note.isPinned,
                 isArchived: note.isArchived,
                 isCompleted: note.isCompleted,
+                tags: note.tags,
                 createdAt: note.createdAt,
                 modifiedAt: Date()
             )

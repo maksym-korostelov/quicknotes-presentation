@@ -59,6 +59,7 @@ final class NoteDetailViewModel {
                 isPinned: !note.isPinned,
                 isArchived: note.isArchived,
                 isCompleted: note.isCompleted,
+                tags: note.tags,
                 createdAt: note.createdAt,
                 modifiedAt: Date()
             )
@@ -83,6 +84,7 @@ final class NoteDetailViewModel {
                 isPinned: note.isPinned,
                 isArchived: !note.isArchived,
                 isCompleted: note.isCompleted,
+                tags: note.tags,
                 createdAt: note.createdAt,
                 modifiedAt: Date()
             )
@@ -107,6 +109,7 @@ final class NoteDetailViewModel {
                 isPinned: note.isPinned,
                 isArchived: note.isArchived,
                 isCompleted: !note.isCompleted,
+                tags: note.tags,
                 createdAt: note.createdAt,
                 modifiedAt: Date()
             )
