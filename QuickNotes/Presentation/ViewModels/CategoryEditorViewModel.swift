@@ -3,20 +3,29 @@ import Observation
 
 // MARK: - CategoryEditorViewModel
 
+/// ViewModel for the category editor sheet (`CategoryEditorView`).
+/// Supports both creating a new category and editing an existing one.
 @Observable
 final class CategoryEditorViewModel {
 
+    /// Current value of the category name text field.
     var name: String
+    /// SF Symbol name selected by the user for the category icon.
     var selectedIcon: String
+    /// Hex color string currently selected for the category.
     var selectedColorHex: String
+    /// `true` while a save operation is in flight.
     private(set) var isLoading = false
+    /// `true` once the category has been successfully saved; used to dismiss the sheet.
     private(set) var isSaved = false
+    /// Non-nil when the last save attempt failed; contains a human-readable description.
     private(set) var errorMessage: String?
 
     private let addCategoryUseCase: AddCategoryUseCaseProtocol
     private let updateCategoryUseCase: UpdateCategoryUseCaseProtocol
     private let existingCategory: Category?
 
+    /// Predefined icon choices available to the user, each as a display name and its SF Symbol identifier.
     static let availableIcons: [(name: String, sfSymbol: String)] = [
         ("Folder", "folder.fill"),
         ("Briefcase", "briefcase.fill"),
@@ -35,6 +44,7 @@ final class CategoryEditorViewModel {
         ("Gift", "gift.fill"),
     ]
 
+    /// Predefined color choices available to the user, each as a display label and its hex string.
     static let availableColors: [(label: String, hex: String)] = [
         ("Blue", "3B82F6"),
         ("Green", "10B981"),
@@ -48,6 +58,10 @@ final class CategoryEditorViewModel {
         ("Gray", "6B7280"),
     ]
 
+    /// Creates the ViewModel, pre-populating fields when editing an existing category.
+    /// - Parameter existingCategory: The category to edit, or `nil` when creating a new one.
+    /// - Parameter addCategoryUseCase: Used to persist the category when creating.
+    /// - Parameter updateCategoryUseCase: Used to persist the category when editing.
     init(
         existingCategory: Category? = nil,
         addCategoryUseCase: AddCategoryUseCaseProtocol,
@@ -61,12 +75,16 @@ final class CategoryEditorViewModel {
         self.selectedColorHex = existingCategory?.colorHex ?? "3B82F6"
     }
 
+    /// `true` when the ViewModel was initialized with an existing category.
     var isEditing: Bool { existingCategory != nil }
 
+    /// `true` when the current name contains at least one non-whitespace character.
     var isValid: Bool {
         !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
+    /// Validates the form and saves the category using either the add or update use case.
+    /// Sets ``isLoading`` while in flight, ``isSaved`` on success, and ``errorMessage`` on failure.
     @MainActor
     func save() async {
         guard isValid else { return }
@@ -98,6 +116,7 @@ final class CategoryEditorViewModel {
         isLoading = false
     }
 
+    /// Clears the current ``errorMessage``, allowing the UI to reset any error state.
     func clearError() {
         errorMessage = nil
     }

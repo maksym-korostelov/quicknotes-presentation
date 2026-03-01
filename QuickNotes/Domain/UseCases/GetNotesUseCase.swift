@@ -2,16 +2,17 @@ import Foundation
 
 // MARK: - Protocol
 
-/// Protocol for fetching all notes.
+/// Fetches all notes stored in the repository, unfiltered.
 protocol GetNotesUseCaseProtocol {
-    /// Fetches all notes.
-    /// - Returns: Array of all notes
+    /// Fetches every note from the data source.
+    /// - Returns: An array of ``Note`` values, possibly empty.
+    /// - Throws: A repository error if the fetch operation fails.
     func execute() async throws -> [Note]
 }
 
 // MARK: - Implementation
 
-/// Use case for fetching all notes.
+/// Default implementation of ``GetNotesUseCaseProtocol`` backed by ``NoteRepositoryProtocol``.
 final class GetNotesUseCase: GetNotesUseCaseProtocol {
 
     // MARK: - Properties
@@ -20,8 +21,7 @@ final class GetNotesUseCase: GetNotesUseCaseProtocol {
 
     // MARK: - Initialization
 
-    /// Initializes the use case with a note repository.
-    /// - Parameter repository: The repository to fetch notes from
+    /// - Parameter repository: The data source to fetch notes from.
     init(repository: NoteRepositoryProtocol) {
         self.repository = repository
     }

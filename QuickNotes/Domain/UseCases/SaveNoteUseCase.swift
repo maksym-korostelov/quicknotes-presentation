@@ -12,8 +12,8 @@ protocol SaveNoteUseCaseProtocol {
 
 // MARK: - Implementation
 
-/// Handles saving (creating or updating) a note.
-/// Encapsulates validation and persistence logic.
+/// Default implementation of ``SaveNoteUseCaseProtocol``.
+/// Validates that the note title is non-empty before delegating persistence to ``NoteRepositoryProtocol``.
 final class SaveNoteUseCase: SaveNoteUseCaseProtocol {
 
     // MARK: - Properties
@@ -22,6 +22,7 @@ final class SaveNoteUseCase: SaveNoteUseCaseProtocol {
 
     // MARK: - Initialization
 
+    /// - Parameter repository: The data source used to persist the note.
     init(repository: NoteRepositoryProtocol) {
         self.repository = repository
     }
@@ -38,7 +39,9 @@ final class SaveNoteUseCase: SaveNoteUseCaseProtocol {
 
 // MARK: - SaveNoteError
 
+/// Errors that can be thrown by ``SaveNoteUseCase``.
 enum SaveNoteError: LocalizedError {
+    /// The note's title is blank or contains only whitespace.
     case emptyTitle
 
     var errorDescription: String? {

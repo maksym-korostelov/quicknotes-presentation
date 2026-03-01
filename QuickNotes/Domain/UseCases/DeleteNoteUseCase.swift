@@ -2,16 +2,17 @@ import Foundation
 
 // MARK: - Protocol
 
-/// Protocol for deleting a note.
+/// Permanently removes a note from the repository by its identifier.
 protocol DeleteNoteUseCaseProtocol {
-    /// Deletes a note by its ID.
-    /// - Parameter id: The unique identifier of the note to delete
+    /// Deletes the note with the given identifier.
+    /// - Parameter id: The unique identifier of the note to delete.
+    /// - Throws: A repository error if no matching note exists or the delete operation fails.
     func execute(id: UUID) async throws
 }
 
 // MARK: - Implementation
 
-/// Deletes a note from the repository.
+/// Default implementation of ``DeleteNoteUseCaseProtocol`` backed by ``NoteRepositoryProtocol``.
 final class DeleteNoteUseCase: DeleteNoteUseCaseProtocol {
     
     // MARK: - Properties
@@ -20,8 +21,7 @@ final class DeleteNoteUseCase: DeleteNoteUseCaseProtocol {
     
     // MARK: - Initialization
     
-    /// Initializes the use case with a note repository.
-    /// - Parameter repository: The repository to delete notes from
+    /// - Parameter repository: The data source from which the note will be removed.
     init(repository: NoteRepositoryProtocol) {
         self.repository = repository
     }

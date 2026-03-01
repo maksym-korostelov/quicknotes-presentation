@@ -21,6 +21,7 @@ final class GetCategoriesUseCase: GetCategoriesUseCaseProtocol {
 
     // MARK: - Initialization
 
+    /// - Parameter repository: The data source to fetch categories from.
     init(repository: CategoryRepositoryProtocol) {
         self.repository = repository
     }
