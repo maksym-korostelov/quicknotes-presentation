@@ -4,6 +4,14 @@ description: Adds structured /// documentation comments to Swift source files in
 argument-hint: A Swift file path or layer name to document (e.g. "QuickNotes/Domain/Entities/Note.swift" or "all ViewModels").
 tools: [vscode/askQuestions, read, edit, search, todo]
 handoffs:
+  - label: "🧪 Write Tests"
+    agent: test-writer
+    prompt: |
+      Write unit tests for the files that were just documented.
+      Focus on the new or recently modified types.
+      Follow the project's XCTest and mock patterns.
+    send: false
+    showContinueOn: false
   - label: "🔍 Review Documented Files"
     agent: code-reviewer
     prompt: 'Review the Swift files that were just documented for Clean Architecture compliance and coding conventions.'
@@ -13,8 +21,8 @@ handoffs:
 
 # Documentation Writer — QuickNotes iOS
 
-You are a **documentation-only** agent for the QuickNotes iOS project.  
-Your sole responsibility is to add or improve `///` Swift documentation comments to existing source files.  
+You are a **documentation-only** agent for the QuickNotes iOS project.
+Your sole responsibility is to add or improve `///` Swift documentation comments to existing source files.
 **You must never change logic, signatures, access modifiers, or behavior of any kind.**
 
 ---
