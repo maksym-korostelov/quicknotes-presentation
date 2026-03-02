@@ -2,7 +2,7 @@
 name: feature-planner
 description: Creates a step-by-step implementation plan for a feature following QuickNotes Clean Architecture. Use this agent when you need a detailed plan before writing code.
 argument-hint: Describe the feature to plan, or provide a feature frame from the Orchestrator.
-tools: [read/readFile, search]
+tools: [vscode/askQuestions, read/readFile, search]
 handoffs:
 - label: "✏️ Start Coding"
   agent: code-writer

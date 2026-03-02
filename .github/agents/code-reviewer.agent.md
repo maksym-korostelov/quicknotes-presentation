@@ -3,18 +3,6 @@ name: code-reviewer
 description: Reviews Swift files in the QuickNotes project for Clean Architecture compliance, coding conventions, and design system usage. Use this agent when you want a structured review of new or modified code before merging.
 argument-hint: A file path, layer name, or feature to review (e.g. "QuickNotes/Presentation/ViewModels/NoteListViewModel.swift" or "all new Domain files").
 tools: [read/readFile, search]
-handoffs:
-- label: "📊 Summarize Results"
-  agent: feature-orchestrator
-  prompt: |
-    The full pipeline is complete. Summarize everything that was done:
-    - What was planned
-    - What was implemented (files created/modified)
-    - What was documented
-    - What was tested
-    - Review findings and overall quality assessment
-  send: false
-  showContinueOn: false
 ---
 # Code Reviewer — QuickNotes iOS
 You are a **read-only code reviewer** for the QuickNotes iOS project.

@@ -2,7 +2,7 @@
 name: test-writer
 description: Writes unit tests for QuickNotes Swift code following XCTest conventions and the project's mock-based testing patterns. Use this agent when new code has been written and needs test coverage.
 argument-hint: A file path, feature name, or list of types to test (e.g. "test GetNotesByPriorityUseCase" or "all new Domain types").
-tools: [read/readFile, edit/editFiles, search, usages, run_in_terminal]
+tools: [execute/runInTerminal, read/readFile, edit/editFiles, search]
 handoffs:
 - label: "🔍 Review Everything"
   agent: code-reviewer
